@@ -1,0 +1,448 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CSS VARIABLEN
+   ============================================================ */
+:root {
+  --bg-primary: #0a0a14;
+  --bg-secondary: #12121f;
+  --bg-tertiary: #1a1a2e;
+  --accent-red: #e94560;
+  --accent-cyan: #00d4ff;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b8;
+  --text-muted: #606078;
+  --border: #2a2a3e;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0a0a14;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%,
+      rgba(233, 69, 96, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%,
+      rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+  background-attachment: fixed;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   TYPOGRAFIE
+   ============================================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+/* ============================================================
+   GLASS — NAVIGATION
+   ============================================================ */
+.glass-nav {
+  background: rgba(10, 10, 20, 0.7);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================================
+   GLASS — CARD
+   ============================================================ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent
+  );
+}
+
+/* ============================================================
+   GLASS — SIDEBAR
+   ============================================================ */
+.glass-sidebar {
+  background: rgba(10, 10, 20, 0.6);
+  backdrop-filter: blur(32px) saturate(150%);
+  -webkit-backdrop-filter: blur(32px) saturate(150%);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ============================================================
+   GLASS — MODAL
+   ============================================================ */
+.glass-modal {
+  background: rgba(18, 18, 31, 0.85);
+  backdrop-filter: blur(48px) saturate(200%);
+  -webkit-backdrop-filter: blur(48px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+}
+
+/* ============================================================
+   GLASS — BUTTON PRIMARY
+   ============================================================ */
+.glass-button-primary {
+  background: #e94560;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 4px 20px rgba(233, 69, 96, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.glass-button-primary:hover {
+  background: #f05070;
+  box-shadow:
+    0 6px 28px rgba(233, 69, 96, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.glass-button-primary:disabled {
+  background: #4a4a5a;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.5;
+}
+
+/* ============================================================
+   GLASS — BUTTON SECONDARY
+   ============================================================ */
+.glass-button {
+  background: rgba(233, 69, 96, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(233, 69, 96, 0.4);
+  border-top: 1px solid rgba(233, 69, 96, 0.6);
+  box-shadow:
+    0 4px 16px rgba(233, 69, 96, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.glass-button:hover {
+  background: rgba(233, 69, 96, 0.25);
+  transform: translateY(-1px);
+}
+
+.glass-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================================
+   GLASS — INPUT
+   ============================================================ */
+.glass-input {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.glass-input::placeholder {
+  color: #606078;
+}
+
+.glass-input:focus {
+  border-color: rgba(233, 69, 96, 0.6);
+  box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1);
+  outline: none;
+}
+
+.glass-input option {
+  background: #12121f;
+  color: #ffffff;
+}
+
+/* ============================================================
+   GLASS — BADGE
+   ============================================================ */
+.glass-badge {
+  background: rgba(0, 212, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 999px;
+  color: #00d4ff;
+  font-size: 12px;
+  padding: 2px 10px;
+  display: inline-block;
+}
+
+.glass-badge-red {
+  background: rgba(233, 69, 96, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(233, 69, 96, 0.25);
+  border-radius: 999px;
+  color: #e94560;
+  font-size: 12px;
+  padding: 2px 10px;
+  display: inline-block;
+}
+
+.glass-badge-green {
+  background: rgba(0, 255, 128, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 255, 128, 0.25);
+  border-radius: 999px;
+  color: #00ff80;
+  font-size: 12px;
+  padding: 2px 10px;
+  display: inline-block;
+}
+
+/* ============================================================
+   GLASS — PRO CARD (roter Rand)
+   ============================================================ */
+.glass-card-pro {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(233, 69, 96, 0.4);
+  border-top: 1px solid rgba(233, 69, 96, 0.6);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 32px rgba(233, 69, 96, 0.08),
+    inset 0 1px 0 rgba(233, 69, 96, 0.2);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card-pro::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(233, 69, 96, 0.5) 50%,
+    transparent
+  );
+}
+
+/* ============================================================
+   PARTIKEL-EFFEKT (CSS-Only)
+   ============================================================ */
+.particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(233, 69, 96, 0.6);
+  animation: float-particle linear infinite;
+}
+
+.particle:nth-child(odd) {
+  background: rgba(0, 212, 255, 0.4);
+}
+
+.particle:nth-child(1)  { left: 10%; animation-duration: 12s; animation-delay: 0s;    width: 3px; height: 3px; }
+.particle:nth-child(2)  { left: 20%; animation-duration: 18s; animation-delay: 2s; }
+.particle:nth-child(3)  { left: 30%; animation-duration: 14s; animation-delay: 4s;    width: 4px; height: 4px; }
+.particle:nth-child(4)  { left: 40%; animation-duration: 20s; animation-delay: 1s; }
+.particle:nth-child(5)  { left: 50%; animation-duration: 16s; animation-delay: 3s;    width: 2px; height: 2px; }
+.particle:nth-child(6)  { left: 60%; animation-duration: 13s; animation-delay: 5s;    width: 3px; height: 3px; }
+.particle:nth-child(7)  { left: 70%; animation-duration: 19s; animation-delay: 0.5s; }
+.particle:nth-child(8)  { left: 80%; animation-duration: 15s; animation-delay: 2.5s;  width: 4px; height: 4px; }
+.particle:nth-child(9)  { left: 90%; animation-duration: 17s; animation-delay: 1.5s; }
+.particle:nth-child(10) { left: 5%;  animation-duration: 11s; animation-delay: 3.5s;  width: 2px; height: 2px; }
+.particle:nth-child(11) { left: 15%; animation-duration: 22s; animation-delay: 6s; }
+.particle:nth-child(12) { left: 25%; animation-duration: 14s; animation-delay: 0.8s;  width: 3px; height: 3px; }
+.particle:nth-child(13) { left: 35%; animation-duration: 16s; animation-delay: 4.2s; }
+.particle:nth-child(14) { left: 45%; animation-duration: 18s; animation-delay: 1.2s;  width: 2px; height: 2px; }
+.particle:nth-child(15) { left: 55%; animation-duration: 13s; animation-delay: 7s;    width: 4px; height: 4px; }
+.particle:nth-child(16) { left: 65%; animation-duration: 21s; animation-delay: 2.8s; }
+.particle:nth-child(17) { left: 75%; animation-duration: 15s; animation-delay: 5.5s;  width: 3px; height: 3px; }
+.particle:nth-child(18) { left: 85%; animation-duration: 17s; animation-delay: 0.3s; }
+.particle:nth-child(19) { left: 95%; animation-duration: 12s; animation-delay: 3.8s;  width: 2px; height: 2px; }
+.particle:nth-child(20) { left: 48%; animation-duration: 19s; animation-delay: 6.5s;  width: 3px; height: 3px; }
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.progress-bar {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  height: 6px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e94560, #ff6b6b);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(233, 69, 96, 0.5);
+}
+
+/* ============================================================
+   ACCORDION (FAQ)
+   ============================================================ */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.accordion-content.open {
+  max-height: 500px;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a3e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e94560;
+}
+
+/* ============================================================
+   GLOW EFFEKTE
+   ============================================================ */
+.glow-red {
+  box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.text-gradient-red {
+  background: linear-gradient(135deg, #e94560, #ff8fa3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #00d4ff, #7df9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+}
+
+.border-accent-red {
+  border-color: rgba(233, 69, 96, 0.4);
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
