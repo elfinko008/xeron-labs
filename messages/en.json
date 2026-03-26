@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "tutorial": "Tutorial",
+    "community": "Community",
+    "support": "Support",
+    "faq": "FAQ",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Get Started"
+  },
+  "hero": {
+    "badge": "AI-Powered Game Builder",
+    "subtitle": "Describe your game. XERON builds it.",
+    "cta_primary": "Start for Free →",
+    "cta_secondary": "Watch Demo"
+  },
+  "generate": {
+    "title": "Generate Game",
+    "placeholder": "Describe your Roblox game in detail...",
+    "hint": "Ctrl+Enter to generate",
+    "button": "Generate Game →",
+    "generating": "Generating...",
+    "cost": "This generation costs:",
+    "credits": "Credits"
+  },
+  "sidebar": {
+    "generate": "Generate Game",
+    "script": "Create Script",
+    "ui": "Create UI",
+    "fix": "Fix Game",
+    "clean": "Clean Explorer",
+    "diagnose": "Diagnose Game",
+    "projects": "My Projects",
+    "account": "Account"
+  },
+  "credits": {
+    "buy": "Buy Credits",
+    "upgrade": "Upgrade Plan",
+    "reset_in": "Credits reset in",
+    "days": "days",
+    "hours": "hours",
+    "sub_credits": "Sub Credits",
+    "bonus_credits": "Bonus Credits"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "copy": "Copy",
+    "download": "Download",
+    "open": "Open"
+  }
+}

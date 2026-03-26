@@ -1,54 +1,52 @@
-require('dotenv').config()
-const { Client, GatewayIntentBits } = require('discord.js')
+const { Client, GatewayIntentBits, Events } = require('discord.js')
 const fetch = require('node-fetch')
+require('dotenv').config()
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 })
 
-client.once('ready', () => {
-  console.log(`[XERON Bot] Eingeloggt als ${client.user.tag}`)
+client.once(Events.ClientReady, (c) => {
+  console.log(`✅ XERON Bot ready as ${c.user.tag}`)
 })
 
-client.on('guildMemberAdd', async (member) => {
-  if (member.guild.id !== process.env.DISCORD_SERVER_ID) return
+client.on(Events.GuildMemberAdd, async (member) => {
+  console.log(`New member: ${member.user.tag} (${member.id})`)
 
-  const discordId = member.id
-  console.log(`[XERON Bot] Neues Mitglied: ${member.user.tag} (${discordId})`)
-
-  // Webhook an XERON API senden
+  // Notify webhook to give credits
   try {
-    const res = await fetch('https://xeron-labs.com/api/discord/webhook', {
+    const res = await fetch(`${process.env.APP_URL || 'https://xeron-labs.com'}/api/discord/webhook`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        discord_id: discordId,
-        secret: process.env.DISCORD_WEBHOOK_SECRET,
+        discord_id: member.id,
+        secret: process.env.DISCORD_WEBHOOK_SECRET || 'XeronBot2025Geheim',
       }),
     })
-
     const data = await res.json()
-    console.log(`[XERON Bot] Webhook-Antwort:`, data)
-
-    if (data.success) {
-      // DM an neues Mitglied
-      try {
-        await member.send(
-          `🎮 **Willkommen bei XERON Engine!**\n\n` +
-          `Du hast **${data.credits_added || 10} Bonus-Credits** erhalten! 🎉\n\n` +
-          `Generiere jetzt dein erstes Roblox-Spiel:\n` +
-          `👉 https://xeron-labs.com/dashboard`
-        )
-      } catch {
-        console.log(`[XERON Bot] DM konnte nicht gesendet werden (${member.user.tag})`)
-      }
-    }
+    console.log('Webhook response:', data)
   } catch (err) {
-    console.error('[XERON Bot] Webhook-Fehler:', err)
+    console.error('Webhook error:', err)
+  }
+
+  // DM the new member
+  try {
+    await member.send(
+      `🎮 **Welcome to the XERON Engine community!**\n\n` +
+      `You just received **10 bonus credits** for joining our Discord!\n\n` +
+      `🚀 Start building your Roblox game: https://xeron-labs.com/dashboard\n\n` +
+      `Need help? Ask in #support. Happy building! ✨`
+    )
+    console.log(`DM sent to ${member.user.tag}`)
+  } catch (err) {
+    console.log(`Could not DM ${member.user.tag}:`, err.message)
   }
 })
 
-client.login(process.env.DISCORD_BOT_TOKEN)
+const token = process.env.DISCORD_BOT_TOKEN
+if (!token) {
+  console.error('❌ DISCORD_BOT_TOKEN not set!')
+  process.exit(1)
+}
+
+client.login(token)

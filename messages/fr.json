@@ -1,0 +1,8 @@
+{
+  "nav": { "features": "Fonctionnalités", "pricing": "Tarifs", "tutorial": "Tutoriel", "community": "Communauté", "support": "Support", "faq": "FAQ", "dashboard": "Tableau de bord", "login": "Connexion", "register": "Commencer" },
+  "hero": { "badge": "Constructeur de jeux IA", "subtitle": "Décrivez votre jeu. XERON le construit.", "cta_primary": "Commencer gratuitement →", "cta_secondary": "Voir la démo" },
+  "generate": { "title": "Générer un jeu", "placeholder": "Décrivez votre jeu Roblox en détail...", "hint": "Ctrl+Entrée pour générer", "button": "Générer le jeu →", "generating": "Génération...", "cost": "Cette génération coûte:", "credits": "Crédits" },
+  "sidebar": { "generate": "Générer jeu", "script": "Créer script", "ui": "Créer UI", "fix": "Réparer jeu", "clean": "Nettoyer", "diagnose": "Diagnostiquer", "projects": "Mes projets", "account": "Compte" },
+  "credits": { "buy": "Acheter crédits", "upgrade": "Améliorer plan", "reset_in": "Réinitialisation dans", "days": "jours", "hours": "heures", "sub_credits": "Crédits abo", "bonus_credits": "Crédits bonus" },
+  "common": { "loading": "Chargement...", "error": "Une erreur s'est produite", "save": "Enregistrer", "cancel": "Annuler", "back": "Retour", "copy": "Copier", "download": "Télécharger", "open": "Ouvrir" }
+}

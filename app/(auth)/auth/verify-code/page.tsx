@@ -128,7 +128,7 @@ function VerifyCodeContent() {
             </p>
           </div>
 
-          {/* 6 Digit-Inputs */}
+          {/* 8 Digit-Inputs */}
           <div className="flex gap-2 justify-center mb-6" onPaste={handlePaste}>
             {digits.map((d, i) => (
               <input
@@ -141,7 +141,7 @@ function VerifyCodeContent() {
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 className="glass-input text-center font-display text-2xl"
-                style={{ width: 52, height: 60, fontSize: 24 }}
+                style={{ width: 44, height: 56, fontSize: 22 }}
               />
             ))}
           </div>

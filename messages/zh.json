@@ -1,0 +1,8 @@
+{
+  "nav": { "features": "功能", "pricing": "价格", "tutorial": "教程", "community": "社区", "support": "支持", "faq": "常见问题", "dashboard": "仪表板", "login": "登录", "register": "开始" },
+  "hero": { "badge": "AI游戏构建器", "subtitle": "描述您的游戏。XERON来构建它。", "cta_primary": "免费开始 →", "cta_secondary": "观看演示" },
+  "generate": { "title": "生成游戏", "placeholder": "详细描述您的Roblox游戏...", "hint": "Ctrl+Enter生成", "button": "生成游戏 →", "generating": "生成中...", "cost": "此次生成费用:", "credits": "积分" },
+  "sidebar": { "generate": "生成游戏", "script": "创建脚本", "ui": "创建UI", "fix": "修复游戏", "clean": "清理", "diagnose": "诊断", "projects": "我的项目", "account": "账户" },
+  "credits": { "buy": "购买积分", "upgrade": "升级计划", "reset_in": "重置于", "days": "天", "hours": "小时", "sub_credits": "订阅积分", "bonus_credits": "奖励积分" },
+  "common": { "loading": "加载中...", "error": "发生错误", "save": "保存", "cancel": "取消", "back": "返回", "copy": "复制", "download": "下载", "open": "打开" }
+}

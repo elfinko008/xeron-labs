@@ -1,0 +1,8 @@
+{
+  "nav": { "features": "機能", "pricing": "料金", "tutorial": "チュートリアル", "community": "コミュニティ", "support": "サポート", "faq": "よくある質問", "dashboard": "ダッシュボード", "login": "ログイン", "register": "始める" },
+  "hero": { "badge": "AIゲームビルダー", "subtitle": "ゲームを説明して。XERONが作ります。", "cta_primary": "無料で始める →", "cta_secondary": "デモを見る" },
+  "generate": { "title": "ゲームを生成", "placeholder": "Robloxゲームを詳しく説明してください...", "hint": "Ctrl+Enterで生成", "button": "ゲームを生成 →", "generating": "生成中...", "cost": "この生成のコスト:", "credits": "クレジット" },
+  "sidebar": { "generate": "ゲーム生成", "script": "スクリプト作成", "ui": "UI作成", "fix": "ゲーム修正", "clean": "クリーン", "diagnose": "診断", "projects": "マイプロジェクト", "account": "アカウント" },
+  "credits": { "buy": "クレジット購入", "upgrade": "プランアップ", "reset_in": "リセット", "days": "日", "hours": "時間", "sub_credits": "サブクレジット", "bonus_credits": "ボーナスクレジット" },
+  "common": { "loading": "読み込み中...", "error": "エラーが発生しました", "save": "保存", "cancel": "キャンセル", "back": "戻る", "copy": "コピー", "download": "ダウンロード", "open": "開く" }
+}

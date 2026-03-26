@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "features": "Funktionen",
+    "pricing": "Preise",
+    "tutorial": "Tutorial",
+    "community": "Community",
+    "support": "Support",
+    "faq": "FAQ",
+    "dashboard": "Dashboard",
+    "login": "Anmelden",
+    "register": "Jetzt starten"
+  },
+  "hero": {
+    "badge": "KI-gestützter Spielebauer",
+    "subtitle": "Beschreibe dein Spiel. XERON baut es.",
+    "cta_primary": "Kostenlos starten →",
+    "cta_secondary": "Demo ansehen"
+  },
+  "generate": {
+    "title": "Spiel generieren",
+    "placeholder": "Beschreibe dein Roblox-Spiel im Detail...",
+    "hint": "Strg+Enter zum Generieren",
+    "button": "Spiel generieren →",
+    "generating": "Generiere...",
+    "cost": "Diese Generierung kostet:",
+    "credits": "Credits"
+  },
+  "sidebar": {
+    "generate": "Spiel generieren",
+    "script": "Script erstellen",
+    "ui": "UI erstellen",
+    "fix": "Spiel reparieren",
+    "clean": "Explorer bereinigen",
+    "diagnose": "Spiel diagnostizieren",
+    "projects": "Meine Projekte",
+    "account": "Konto"
+  },
+  "credits": {
+    "buy": "Credits kaufen",
+    "upgrade": "Plan upgraden",
+    "reset_in": "Credits zurückgesetzt in",
+    "days": "Tage",
+    "hours": "Stunden",
+    "sub_credits": "Abo-Credits",
+    "bonus_credits": "Bonus-Credits"
+  },
+  "common": {
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "back": "Zurück",
+    "copy": "Kopieren",
+    "download": "Herunterladen",
+    "open": "Öffnen"
+  }
+}

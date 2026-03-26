@@ -16,7 +16,7 @@ const sections = [
             <span key={t} className="glass-badge">{t}</span>
           ))}
         </div>
-        <p className="mt-3">Beispiel: <code className="text-white">"Erstelle ein Roleplay-Spiel..."</code></p>
+        <p className="mt-3">Beispiel: <code className="text-white">&quot;Erstelle ein Roleplay-Spiel...&quot;</code></p>
       </div>
     ),
   },
@@ -62,10 +62,10 @@ const sections = [
       <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
         <p>Nenne konkret welche Objekte du möchtest:</p>
         <ul className="space-y-1 mt-2">
-          <li>• <span className="text-white">Fahrzeuge:</span> "3 Autos, 1 Motorrad, 2 Trucks"</li>
-          <li>• <span className="text-white">Gebäude:</span> "5 Häuser, 1 Krankenhaus, 1 Polizeiwache"</li>
-          <li>• <span className="text-white">NPCs:</span> "10 zufällig laufende NPCs"</li>
-          <li>• <span className="text-white">Waffen:</span> "Pistole, Rifle, Granate mit Damage-System"</li>
+          <li>• <span className="text-white">Fahrzeuge:</span> &quot;3 Autos, 1 Motorrad, 2 Trucks&quot;</li>
+          <li>• <span className="text-white">Gebäude:</span> &quot;5 Häuser, 1 Krankenhaus, 1 Polizeiwache&quot;</li>
+          <li>• <span className="text-white">NPCs:</span> &quot;10 zufällig laufende NPCs&quot;</li>
+          <li>• <span className="text-white">Waffen:</span> &quot;Pistole, Rifle, Granate mit Damage-System&quot;</li>
         </ul>
       </div>
     ),
@@ -76,11 +76,11 @@ const sections = [
       <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
         <p>Definiere die Spiellogik:</p>
         <ul className="space-y-1 mt-2">
-          <li>• <span className="text-white">Leaderboard:</span> "Leaderboard mit Geld und Level"</li>
-          <li>• <span className="text-white">Teams:</span> "2 Teams: Polizei vs. Gangster"</li>
-          <li>• <span className="text-white">Checkpoints:</span> "Checkpoint-System mit Respawn"</li>
-          <li>• <span className="text-white">Shops:</span> "Fahrzeug-Shop mit DataStore"</li>
-          <li>• <span className="text-white">Jobs:</span> "Taxifahrer, Polizist, Arzt Jobs"</li>
+          <li>• <span className="text-white">Leaderboard:</span> &quot;Leaderboard mit Geld und Level&quot;</li>
+          <li>• <span className="text-white">Teams:</span> &quot;2 Teams: Polizei vs. Gangster&quot;</li>
+          <li>• <span className="text-white">Checkpoints:</span> &quot;Checkpoint-System mit Respawn&quot;</li>
+          <li>• <span className="text-white">Shops:</span> &quot;Fahrzeug-Shop mit DataStore&quot;</li>
+          <li>• <span className="text-white">Jobs:</span> &quot;Taxifahrer, Polizist, Arzt Jobs&quot;</li>
         </ul>
       </div>
     ),
@@ -91,10 +91,10 @@ const sections = [
       <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
         <p>Steuere die visuelle Stimmung:</p>
         <ul className="space-y-1 mt-2">
-          <li>• <span className="text-white">Tageszeit:</span> "Sonnenuntergang (18:00 Uhr)"</li>
-          <li>• <span className="text-white">Wetter:</span> "Leichter Regen, Nebel"</li>
-          <li>• <span className="text-white">Bloom:</span> "Bloom-Effekt aktiviert"</li>
-          <li>• <span className="text-white">Atmosphäre:</span> "Haze: 0.3, Density: 0.5"</li>
+          <li>• <span className="text-white">Tageszeit:</span> &quot;Sonnenuntergang (18:00 Uhr)&quot;</li>
+          <li>• <span className="text-white">Wetter:</span> &quot;Leichter Regen, Nebel&quot;</li>
+          <li>• <span className="text-white">Bloom:</span> &quot;Bloom-Effekt aktiviert&quot;</li>
+          <li>• <span className="text-white">Atmosphäre:</span> &quot;Haze: 0.3, Density: 0.5&quot;</li>
         </ul>
       </div>
     ),

@@ -1,42 +1,35 @@
 import type { Metadata } from 'next'
-import { Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-})
+import { SplashScreenWrapper } from '@/components/SplashScreen'
+import { LanguageProvider } from '@/lib/language-context'
 
 export const metadata: Metadata = {
-  title: 'XERON Engine — KI-gesteuerte Roblox-Spiel-Generierung',
-  description:
-    'Beschreibe dein Roblox-Spiel. XERON Engine baut es automatisch — in Minuten. KI-gesteuerte SaaS-Plattform mit Roblox Studio Plugin.',
-  keywords: ['Roblox', 'KI', 'Game Generator', 'Roblox Studio', 'XERON'],
-  openGraph: {
-    title: 'XERON Engine',
-    description: 'Beschreibe dein Roblox-Spiel. Wir bauen es.',
-    url: 'https://xeron-labs.com',
-    siteName: 'XERON Engine',
-    locale: 'de_DE',
-    type: 'website',
-  },
+  title: 'XERON Engine — AI Roblox Game Builder',
+  description: 'Build Roblox games with AI. Describe your game, XERON builds it.',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            try {
+              const theme = localStorage.getItem('theme') || 'dark';
+              if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+            } catch(e) {}
+          `
+        }} />
+      </head>
+      <body>
+        <LanguageProvider>
+          <SplashScreenWrapper />
+          {children}
+        </LanguageProvider>
+      </body>
     </html>
   )
 }
