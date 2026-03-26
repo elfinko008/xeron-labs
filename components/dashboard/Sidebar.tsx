@@ -8,7 +8,7 @@ const PLAN_MAX_CREDITS: Record<string, number> = {
   free: 10,
   starter: 100,
   pro: 500,
-  enterprise: 2000,
+  enterprise: 1000,
 }
 
 export default function DashboardSidebar({ profile }: { profile: Profile }) {
@@ -16,6 +16,8 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
   const router = useRouter()
   const maxCredits = PLAN_MAX_CREDITS[profile.plan] ?? 10
   const creditPct = Math.min((profile.credits / maxCredits) * 100, 100)
+  const purchasedCredits = profile.purchased_credits ?? 0
+  const discordClaimed = profile.discord_credits_claimed ?? false
 
   async function handleLogout() {
     const supabase = createClient()
@@ -92,7 +94,7 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
         {/* Credits */}
         <div className="glass-card p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Credits</span>
+            <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Abo-Credits</span>
             <span className="text-sm font-display" style={{ color: 'var(--accent-red)' }}>
               {profile.credits}
             </span>
@@ -100,6 +102,12 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
           <div className="progress-bar mb-3">
             <div className="progress-bar-fill" style={{ width: `${creditPct}%` }} />
           </div>
+          {purchasedCredits > 0 && (
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Gekaufte Credits</span>
+              <span className="text-xs font-medium" style={{ color: '#00d4ff' }}>{purchasedCredits}</span>
+            </div>
+          )}
           <div className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
             Plan: <span className="capitalize text-white">{profile.plan}</span>
             {' · '}{profile.credits} / {maxCredits}
@@ -118,7 +126,31 @@ export default function DashboardSidebar({ profile }: { profile: Profile }) {
           </Link>
         </div>
 
-        {/* Plugin Status */}
+        {/* Discord Bonus */}
+        <div className="glass-card p-4">
+          <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Bonusse</div>
+          {discordClaimed ? (
+            <div className="flex items-center gap-2 text-xs" style={{ color: '#00ff80' }}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Discord verbunden ✓
+            </div>
+          ) : (
+            <a
+              href="/api/discord/connect"
+              className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl transition-all"
+              style={{ background: '#5865F2', color: '#ffffff' }}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/>
+              </svg>
+              Discord beitreten +10 Credits
+            </a>
+          )}
+        </div>
+
+        {/* Plugin */}
         <div className="glass-card p-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Roblox Plugin</span>

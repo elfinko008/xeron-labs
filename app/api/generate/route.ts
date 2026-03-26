@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { createAdminClient } from '@/lib/supabase'
 import { routeAndGenerate, calculateCreditCost } from '@/lib/ai-router'
-import { hasEnoughCredits, deductCredits, checkRateLimit } from '@/lib/credits'
+import { hasEnoughCredits, deductCredits, checkIpRateLimit, logRateLimitRequest } from '@/lib/credits'
 
 const GAME_TYPE_WHITELIST = ['obby', 'roleplay', 'horror', 'racing', 'shooter', 'sandbox', 'custom', 'script', 'ui']
 
@@ -37,19 +37,20 @@ export async function POST(req: NextRequest) {
     const admin = createAdminClient()
     const { data: profile } = await admin
       .from('profiles')
-      .select('plan, credits')
+      .select('plan, credits, purchased_credits')
       .eq('id', user.id)
-      .single() as { data: { plan: string; credits: number } | null }
+      .single() as { data: { plan: string; credits: number; purchased_credits: number } | null }
 
     if (!profile) {
       return NextResponse.json({ error: 'Profil nicht gefunden' }, { status: 404 })
     }
 
-    // Rate-Limit prüfen
-    const withinLimit = await checkRateLimit(user.id)
-    if (!withinLimit) {
+    // Rate-Limit prüfen (IP-basiert)
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip') ?? 'unknown'
+    const rateCheck = await checkIpRateLimit(ip, profile.plan)
+    if (!rateCheck.allowed) {
       return NextResponse.json(
-        { error: 'Rate-Limit erreicht. Maximal 10 Generierungen pro Stunde.' },
+        { error: rateCheck.reason ?? 'Rate-Limit erreicht.' },
         { status: 429 }
       )
     }
@@ -91,6 +92,9 @@ export async function POST(req: NextRequest) {
       creditCost,
       `Generierung: ${projectName} (${creditCost} Credits)`
     )
+
+    // Rate-Limit loggen
+    await logRateLimitRequest(ip, user.id, 'generate')
 
     // KI generieren (async im Hintergrund)
     generateAsync(project.id, user.id, prompt, gameType, quality, profile.plan)

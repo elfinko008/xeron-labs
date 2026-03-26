@@ -7,15 +7,15 @@ const PLAN_LABELS: Record<string, { label: string; credits: number; price: strin
   free:       { label: 'Free',       credits: 10,    price: '0 €/Mo' },
   starter:    { label: 'Starter',    credits: 100,   price: '4,99 €/Mo' },
   pro:        { label: 'Pro',        credits: 500,   price: '14,99 €/Mo' },
-  enterprise: { label: 'Enterprise', credits: 2000,  price: '39,99 €/Mo' },
+  enterprise: { label: 'Enterprise', credits: 1000,  price: '39,99 €/Mo' },
 }
 
 const CREDIT_PACKAGES = [
-  { credits: 25,   price: '1,99 €',  label: 'Mini' },
-  { credits: 75,   price: '4,99 €',  label: 'Starter' },
-  { credits: 200,  price: '11,99 €', label: 'Value' },
-  { credits: 500,  price: '24,99 €', label: 'Power' },
-  { credits: 1500, price: '64,99 €', label: 'Mega' },
+  { credits: 50,   price: '1,99 €',  label: 'Mini' },
+  { credits: 150,  price: '4,99 €',  label: 'Starter' },
+  { credits: 400,  price: '11,99 €', label: 'Value' },
+  { credits: 1000, price: '24,99 €', label: 'Power' },
+  { credits: 3000, price: '64,99 €', label: 'Mega' },
 ]
 
 const TYPE_LABELS: Record<string, string> = {
@@ -74,7 +74,13 @@ export default function AccountClient({
             <div className="font-display text-3xl" style={{ color: 'var(--accent-red)' }}>
               {profile.credits}
             </div>
-            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Credits verfügbar</div>
+            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Abo-Credits</div>
+            {(profile.purchased_credits ?? 0) > 0 && (
+              <div className="mt-1">
+                <span className="font-display text-lg" style={{ color: '#00d4ff' }}>{profile.purchased_credits}</span>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Gekaufte Credits</div>
+              </div>
+            )}
           </div>
         </div>
         {profile.plan !== 'enterprise' && (
@@ -104,7 +110,7 @@ export default function AccountClient({
           ))}
         </div>
         <p className="text-xs mt-3" style={{ color: 'var(--text-muted)' }}>
-          Credits verfallen nicht. Stripe-Zahlung (Testkarte: 4242 4242 4242 4242).
+          Gekaufte Credits verfallen nicht. Nur für Scripts &amp; UI verwendbar — Spiele benötigen ein Abo.
         </p>
       </div>
 

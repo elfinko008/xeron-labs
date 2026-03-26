@@ -143,6 +143,117 @@ export default function TutorialPage() {
           </p>
         </div>
 
+        {/* Was kostet was? */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="font-display text-xl mb-4">Was kostet was?</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--text-secondary)' }}>Aktion</th>
+                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--accent-red)' }}>Credits</th>
+                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--text-secondary)' }}>Mindest-Plan</th>
+                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--text-secondary)' }}>KI-Modell</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { action: 'Script / UI',       credits: '10',  plan: 'Free',     model: 'Gemini Flash-Lite' },
+                  { action: 'Kleines Spiel',      credits: '25',  plan: 'Starter+', model: 'Claude Haiku' },
+                  { action: 'Normales Spiel',     credits: '50',  plan: 'Starter+', model: 'Claude Haiku' },
+                  { action: 'High-End Spiel',     credits: '200', plan: 'Pro+',     model: 'Claude Sonnet' },
+                  { action: 'Fix klein',          credits: '15',  plan: 'Starter+', model: 'Claude Haiku' },
+                  { action: 'Fix groß',           credits: '50',  plan: 'Starter+', model: 'Claude Sonnet' },
+                ].map((row) => (
+                  <tr key={row.action} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <td className="py-2.5 pr-4 text-white">{row.action}</td>
+                    <td className="py-2.5 pr-4 font-display" style={{ color: 'var(--accent-red)' }}>{row.credits}</td>
+                    <td className="py-2.5 pr-4" style={{ color: 'var(--text-secondary)' }}>{row.plan}</td>
+                    <td className="py-2.5" style={{ color: 'var(--text-muted)' }}>{row.model}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
+            💡 Gekaufte Credit-Pakete funktionieren nur für Scripts &amp; UI — Spiele benötigen ein aktives Abo.
+          </p>
+        </div>
+
+        {/* Spieltypen erklärt */}
+        <div className="glass-card p-6 mb-4">
+          <h2 className="font-display text-lg mb-4">Spieltypen erklärt</h2>
+          <div className="grid grid-cols-2 gap-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            {[
+              { type: 'Obby', desc: 'Hindernisparcours mit Checkpoints' },
+              { type: 'Roleplay', desc: 'Offene Welt mit Jobs & NPCs' },
+              { type: 'Horror', desc: 'Grusige Atmosphäre, Jumpscares' },
+              { type: 'Racing', desc: 'Fahrzeuge, Strecken, Leaderboard' },
+              { type: 'Shooter', desc: 'Teams, Waffen, Kill-System' },
+              { type: 'Sandbox', desc: 'Freies Bauen & Erkunden' },
+            ].map((s) => (
+              <div key={s.type} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <div className="font-medium text-white mb-1">{s.type}</div>
+                <div className="text-xs">{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Der perfekte Prompt */}
+        <div className="glass-card p-6 mb-4">
+          <h2 className="font-display text-lg mb-4">Der perfekte Prompt</h2>
+          <div className="text-sm space-y-3" style={{ color: 'var(--text-secondary)' }}>
+            <p>Ein guter Prompt enthält immer diese 5 Elemente:</p>
+            <ol className="space-y-2 list-decimal list-inside">
+              <li><strong className="text-white">Spieltyp</strong> — z.B. &quot;Roleplay-Spiel&quot;</li>
+              <li><strong className="text-white">Terrain-Größe</strong> — z.B. &quot;400x400 Studs, Wald-Biom&quot;</li>
+              <li><strong className="text-white">Assets</strong> — konkrete Objekte, Gebäude, Fahrzeuge</li>
+              <li><strong className="text-white">Spielmechaniken</strong> — Leaderboard, DataStore, Teams</li>
+              <li><strong className="text-white">Atmosphäre</strong> — Tageszeit, Wetter, Lighting</li>
+            </ol>
+            <p className="mt-3">Je detaillierter dein Prompt, desto besser das Ergebnis. Nutze die Beispiel-Prompts unten als Vorlage.</p>
+          </div>
+        </div>
+
+        {/* Terrain & High-End */}
+        <div className="glass-card p-6 mb-4">
+          <h2 className="font-display text-lg mb-4">Terrain &amp; High-End Grafik</h2>
+          <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
+            <p>High-End Generierungen (200 Credits, Pro+) verwenden Claude Sonnet und erzeugen:</p>
+            <ul className="space-y-1 list-disc list-inside mt-2">
+              <li>Detailliertes Multi-Biom Terrain</li>
+              <li>Erweiterte Lighting-Einstellungen (Bloom, Atmosphere, ColorCorrection)</li>
+              <li>Komplexere Script-Architektur mit DataStore</li>
+              <li>Optimierten Code für mehr Spieler-Performance</li>
+            </ul>
+            <p className="mt-3">Für normale Spiele reicht Standard (50 Credits) völlig aus.</p>
+          </div>
+        </div>
+
+        {/* Fix-Modus */}
+        <div className="glass-card p-6 mb-4">
+          <h2 className="font-display text-lg mb-4">Fix-Modus richtig einsetzen</h2>
+          <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
+            <p><strong className="text-white">Fix klein (15 Credits):</strong> Für einzelne Bugs, Script-Fehler oder kleine Anpassungen an bestehendem Code.</p>
+            <p><strong className="text-white">Fix groß (50 Credits):</strong> Für komplette Überarbeitungen, Performance-Optimierungen oder strukturelle Änderungen.</p>
+            <p className="mt-2">Beschreibe beim Fix immer genau: Was funktioniert nicht? Was soll es stattdessen tun?</p>
+          </div>
+        </div>
+
+        {/* Plugin Schritt für Schritt */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="font-display text-lg mb-4">Plugin Schritt für Schritt</h2>
+          <ol className="text-sm space-y-3 list-decimal list-inside" style={{ color: 'var(--text-secondary)' }}>
+            <li>Im Dashboard auf <strong className="text-white">&quot;Plugin herunterladen&quot;</strong> klicken</li>
+            <li>Die <code className="text-white">.rbxm</code> Datei speichern</li>
+            <li>Roblox Studio öffnen → <strong className="text-white">Plugins → Manage Plugins → Install from File</strong></li>
+            <li>Plugin mit deinem XERON-Account verbinden (Token aus Dashboard)</li>
+            <li>Nach der Generierung im Plugin auf <strong className="text-white">&quot;Sync&quot;</strong> klicken</li>
+            <li>Der Code erscheint automatisch im ServerScriptService</li>
+          </ol>
+        </div>
+
         {/* Sektionen */}
         <div className="space-y-4">
           {sections.map((s) => (

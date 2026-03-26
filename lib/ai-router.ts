@@ -15,12 +15,12 @@ export type TaskType =
   | 'fix_large'      // 10 Credits — Sonnet
 
 export const CREDIT_COSTS: Record<TaskType, number> = {
-  script_ui:    1,
-  small_game:   5,
-  normal_game:  15,
-  highend_game: 30,
-  fix_small:    3,
-  fix_large:    10,
+  script_ui:    10,
+  small_game:   25,
+  normal_game:  50,
+  highend_game: 200,
+  fix_small:    15,
+  fix_large:    50,
 }
 
 // ============================================================

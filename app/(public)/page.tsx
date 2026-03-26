@@ -18,6 +18,8 @@ function Navbar() {
           <Link href="#features" className="hover:text-white transition-colors">Features</Link>
           <Link href="#preise" className="hover:text-white transition-colors">Preise</Link>
           <Link href="/tutorial" className="hover:text-white transition-colors">Tutorial</Link>
+          <Link href="/community" className="hover:text-white transition-colors">Community</Link>
+          <Link href="/support" className="hover:text-white transition-colors">Support</Link>
           <Link href="#faq" className="hover:text-white transition-colors">FAQ</Link>
         </div>
         <div className="flex items-center gap-3">
@@ -240,7 +242,8 @@ function PricingSection() {
       name: 'Free',
       price: '0',
       credits: '10 Credits/Mo',
-      features: ['10 Credits pro Monat', 'Gemini KI (Script & UI)', 'Roblox Studio Plugin', 'Community Support'],
+      features: ['10 Credits pro Monat', 'Nur Script & UI (Gemini)', 'Max. 1 Generierung/Tag', 'Roblox Studio Plugin'],
+      note: null,
       cta: 'Kostenlos starten',
       href: '/register',
       isPro: false,
@@ -249,7 +252,8 @@ function PricingSection() {
       name: 'Starter',
       price: '4,99',
       credits: '100 Credits/Mo',
-      features: ['100 Credits pro Monat', 'Claude Haiku KI', 'Roblox Studio Plugin', 'Email Support'],
+      features: ['100 Credits pro Monat', 'Claude Haiku KI', 'Script, UI & kleine Spiele', 'Email Support'],
+      note: null,
       cta: 'Starter wählen',
       href: '/register?plan=starter',
       isPro: false,
@@ -259,7 +263,8 @@ function PricingSection() {
       price: '14,99',
       credits: '500 Credits/Mo',
       badge: 'Beliebt',
-      features: ['500 Credits pro Monat', 'Claude Haiku + Sonnet', 'Roblox Studio Plugin', 'Priority Support', 'High-End Grafik'],
+      features: ['500 Credits pro Monat', 'Claude Haiku + Sonnet', 'Alle Spieltypen', 'Priority Support', 'High-End Grafik'],
+      note: null,
       cta: 'Pro wählen',
       href: '/register?plan=pro',
       isPro: true,
@@ -267,8 +272,9 @@ function PricingSection() {
     {
       name: 'Enterprise',
       price: '39,99',
-      credits: '2.000 Credits/Mo',
-      features: ['2.000 Credits pro Monat', 'Claude Sonnet (alle Tasks)', 'Roblox Studio Plugin', 'Dedizierter Support', 'API-Zugang'],
+      credits: '1.000 Credits/Mo',
+      features: ['1.000 Credits pro Monat', 'Claude Sonnet (alle Tasks)', 'Roblox Studio Plugin', 'Dedizierter Support', 'API-Zugang'],
+      note: null,
       cta: 'Enterprise wählen',
       href: '/register?plan=enterprise',
       isPro: false,
@@ -345,29 +351,89 @@ function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   const faqs = [
+    // Allgemein
     {
+      cat: 'Allgemein',
       q: 'Was ist XERON Engine?',
       a: 'XERON Engine ist eine KI-gesteuerte SaaS-Plattform, die automatisch vollständige Roblox-Spiele generiert. Du beschreibst dein Spiel, die KI erstellt den kompletten Lua-Code — inklusive Terrain, Scripts, GUI und mehr.',
     },
     {
-      q: 'Wie funktioniert das Roblox Studio Plugin?',
-      a: 'Das Plugin verbindet sich über deinen XERON-Account mit der Plattform. Nach der Generierung kannst du mit einem Klick den kompletten Lua-Code direkt in dein Roblox Studio-Projekt laden.',
+      cat: 'Allgemein',
+      q: 'Für wen ist XERON Engine gemacht?',
+      a: 'Für alle Roblox-Enthusiasten — ob Einsteiger ohne Programmierkenntnisse oder erfahrene Developer die schneller prototypen wollen. XERON nimmt dir die mühsame Basis-Codierung ab.',
     },
     {
-      q: 'Welche KI wird verwendet?',
-      a: 'Je nach Plan und Aufgabe: Free-User bekommen Google Gemini (kostenlos) für einfache Scripts. Pro-User nutzen Claude Haiku für normale Spiele. High-End Spiele werden mit Claude Sonnet generiert.',
+      cat: 'Allgemein',
+      q: 'Brauche ich Programmierkenntnisse?',
+      a: 'Nein! Du beschreibst dein Spiel auf Deutsch in natürlicher Sprache. XERON generiert automatisch lauffähigen Lua-Code. Optional kannst du den Code danach anpassen.',
     },
     {
+      cat: 'Allgemein',
+      q: 'Funktioniert es mit kostenlosem Roblox?',
+      a: 'Ja. Du brauchst nur ein kostenloses Roblox-Konto und Roblox Studio (ebenfalls kostenlos). Das XERON Plugin installierst du einmalig in Studio — fertig.',
+    },
+    // Credits & Preise
+    {
+      cat: 'Credits & Preise',
+      q: 'Was sind Credits und was ist der Unterschied zwischen Abo- und gekauften Credits?',
+      a: 'Credits sind die Währung für Generierungen. Abo-Credits bekommst du monatlich mit deinem Plan und können für alle Features genutzt werden. Gekaufte Credits (Einmalkauf) verfallen nicht, funktionieren aber NUR für Script & UI — nicht für Spiele.',
+    },
+    {
+      cat: 'Credits & Preise',
+      q: 'Was kosten die verschiedenen Generierungen?',
+      a: 'Script/UI: 10 Credits (Free) · Kleines Spiel: 25 Credits (Starter+) · Normales Spiel: 50 Credits (Starter+) · High-End Spiel: 200 Credits (Pro+) · Fix klein: 15 Credits (Starter+) · Fix groß: 50 Credits (Starter+)',
+    },
+    {
+      cat: 'Credits & Preise',
+      q: 'Verfallen Credits?',
+      a: 'Abo-Credits verfallen am Monatsende (werden durch neue ersetzt). Gekaufte Credits (Einmalkauf-Pakete) verfallen nie.',
+    },
+    {
+      cat: 'Credits & Preise',
       q: 'Kann ich Credits kaufen ohne Abo?',
-      a: 'Ja! Wir bieten Credit-Pakete als Einmalkauf an: von 25 Credits (1,99€) bis 1.500 Credits (64,99€). Die Credits verfallen nicht.',
+      a: 'Ja! Credit-Pakete ab 1,99€: Mini (50), Starter (150), Value (400), Power (1.000), Mega (3.000). Wichtig: Einmalkauf-Credits funktionieren nur für Scripts & UI — für Spiele ist ein aktives Abo nötig.',
     },
     {
-      q: 'Ist der generierte Code wirklich lauffähig?',
-      a: 'Der generierte Lua-Code ist direkt in Roblox Studio ausführbar. Bei komplexen Spielen kann gelegentlich manuelles Anpassen nötig sein — dafür gibt es die Fix-Funktion.',
+      cat: 'Credits & Preise',
+      q: 'Gibt es eine kostenlose Testversion?',
+      a: 'Ja! Der Free-Plan beinhaltet 10 Credits pro Monat ohne Kreditkarte. Damit kannst du Scripts und UI generieren (max. 1x pro Tag).',
+    },
+    // Technisches
+    {
+      cat: 'Technisches',
+      q: 'Wie installiere ich das Plugin?',
+      a: 'Im Dashboard auf "Plugin herunterladen" klicken → .rbxm Datei speichern → In Roblox Studio: Plugins → Manage Plugins → Install from File. Dann verbindest du das Plugin mit deinem XERON-Account.',
     },
     {
-      q: 'Funktioniert das Plugin mit allen Roblox-Versionen?',
-      a: 'Das Plugin wurde für die aktuelle Roblox Studio Version entwickelt und nutzt standard Roblox APIs. Es funktioniert mit allen aktuellen Versionen von Roblox Studio.',
+      cat: 'Technisches',
+      q: 'Was macht der Fix-Modus?',
+      a: 'Mit Fix kannst du Fehler in bestehenden Scripts korrigieren. Klein-Fix (15 Credits) für einzelne Bugs, Groß-Fix (50 Credits) für umfangreiche Überarbeitungen. Claude analysiert deinen Code und liefert eine korrigierte Version.',
+    },
+    {
+      cat: 'Technisches',
+      q: 'Wie lange dauert eine Generierung?',
+      a: 'Scripts & UI: ca. 30–60 Sekunden. Kleine Spiele: 1–2 Minuten. Normale & High-End Spiele: 2–4 Minuten. Die Zeit variiert je nach Komplexität des Prompts.',
+    },
+    {
+      cat: 'Technisches',
+      q: 'Kann die KI 3D-Modelle erstellen?',
+      a: 'Nein. XERON generiert ausschließlich Lua-Code und Terrain-Scripts. Für 3D-Assets empfehlen wir die Roblox Toolbox oder externe Modell-Tools.',
+    },
+    // Account & Zahlung
+    {
+      cat: 'Account & Zahlung',
+      q: 'Wie kündige ich mein Abo?',
+      a: 'Im Dashboard unter Account → Plan → "Abo verwalten" (Stripe Portal). Dort kannst du jederzeit kündigen. Das Abo läuft bis zum Ende der bezahlten Periode weiter.',
+    },
+    {
+      cat: 'Account & Zahlung',
+      q: 'Gibt es eine Rückerstattung?',
+      a: 'Innerhalb von 14 Tagen nach Kauf kannst du per E-Mail an support@xeron-labs.com eine Rückerstattung beantragen (EU-Widerrufsrecht). Bereits verbrauchte Credits werden anteilig abgezogen.',
+    },
+    {
+      cat: 'Account & Zahlung',
+      q: 'Welche Zahlungsmethoden werden akzeptiert?',
+      a: 'Alle gängigen Kreditkarten (Visa, Mastercard, Amex), SEPA-Lastschrift, PayPal und weitere — über Stripe, einem der sichersten Zahlungsanbieter weltweit.',
     },
   ]
 
@@ -375,30 +441,38 @@ function FAQSection() {
     <section id="faq" className="py-20 px-6">
       <div className="max-w-3xl mx-auto">
         <h2 className="font-display text-4xl text-center mb-12">Häufige Fragen</h2>
-        <div className="space-y-3">
-          {faqs.map((faq, i) => (
-            <div key={i} className="glass-card overflow-hidden">
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full px-6 py-5 text-left flex items-center justify-between gap-4"
-              >
-                <span className="font-medium">{faq.q}</span>
-                <svg
-                  className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${openIndex === i ? 'rotate-180' : ''}`}
-                  style={{ color: 'var(--accent-red)' }}
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {openIndex === i && (
-                <div className="px-6 pb-5 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  {faq.a}
-                </div>
-              )}
+        {(['Allgemein', 'Credits & Preise', 'Technisches', 'Account & Zahlung'] as const).map((cat) => (
+          <div key={cat} className="mb-8">
+            <h3 className="font-display text-lg mb-3" style={{ color: 'var(--accent-red)' }}>{cat}</h3>
+            <div className="space-y-3">
+              {faqs.filter((f) => f.cat === cat).map((faq, i) => {
+                const globalIndex = faqs.indexOf(faq)
+                return (
+                  <div key={i} className="glass-card overflow-hidden">
+                    <button
+                      onClick={() => setOpenIndex(openIndex === globalIndex ? null : globalIndex)}
+                      className="w-full px-6 py-5 text-left flex items-center justify-between gap-4"
+                    >
+                      <span className="font-medium">{faq.q}</span>
+                      <svg
+                        className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${openIndex === globalIndex ? 'rotate-180' : ''}`}
+                        style={{ color: 'var(--accent-red)' }}
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {openIndex === globalIndex && (
+                      <div className="px-6 pb-5 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   )
@@ -420,10 +494,11 @@ function Footer() {
 
           {/* Links */}
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            <Link href="/impressum" className="hover:text-white transition-colors">Impressum</Link>
-            <Link href="/datenschutz" className="hover:text-white transition-colors">Datenschutz</Link>
             <Link href="/agb" className="hover:text-white transition-colors">AGB</Link>
-            <Link href="/tutorial" className="hover:text-white transition-colors">Tutorial</Link>
+            <Link href="/datenschutz" className="hover:text-white transition-colors">Datenschutz</Link>
+            <Link href="/impressum" className="hover:text-white transition-colors">Impressum</Link>
+            <Link href="/community" className="hover:text-white transition-colors">Community</Link>
+            <Link href="/support" className="hover:text-white transition-colors">Support</Link>
           </div>
 
           {/* Social Icons */}

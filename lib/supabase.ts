@@ -14,7 +14,11 @@ export interface Profile {
   email: string
   plan: Plan
   credits: number
+  purchased_credits: number
   stripe_customer_id: string | null
+  discord_id: string | null
+  discord_joined_server: boolean
+  discord_credits_claimed: boolean
   created_at: string
 }
 
@@ -74,7 +78,7 @@ export type Database = {
     Tables: {
       profiles: {
         Row: Profile
-        Insert: { id: string; email: string; plan?: string; credits?: number; stripe_customer_id?: string | null }
+        Insert: { id: string; email: string; plan?: string; credits?: number; purchased_credits?: number; stripe_customer_id?: string | null; discord_id?: string | null; discord_joined_server?: boolean; discord_credits_claimed?: boolean }
         Update: Partial<Profile>
         Relationships: []
       }

@@ -17,11 +17,11 @@ export const STRIPE_PRICES = {
 // CREDIT-PAKETE (Stripe Price IDs — nach Erstellung eintragen)
 // ============================================================
 export const CREDIT_PRICES = {
-  mini:    { priceId: process.env.STRIPE_CREDIT_MINI    ?? '', credits: 25 },
-  starter: { priceId: process.env.STRIPE_CREDIT_STARTER ?? '', credits: 75 },
-  value:   { priceId: process.env.STRIPE_CREDIT_VALUE   ?? '', credits: 200 },
-  power:   { priceId: process.env.STRIPE_CREDIT_POWER   ?? '', credits: 500 },
-  mega:    { priceId: process.env.STRIPE_CREDIT_MEGA    ?? '', credits: 1500 },
+  mini:    { priceId: process.env.STRIPE_CREDIT_MINI    ?? '', credits: 50 },
+  starter: { priceId: process.env.STRIPE_CREDIT_STARTER ?? '', credits: 150 },
+  value:   { priceId: process.env.STRIPE_CREDIT_VALUE   ?? '', credits: 400 },
+  power:   { priceId: process.env.STRIPE_CREDIT_POWER   ?? '', credits: 1000 },
+  mega:    { priceId: process.env.STRIPE_CREDIT_MEGA    ?? '', credits: 3000 },
 }
 
 // ============================================================
