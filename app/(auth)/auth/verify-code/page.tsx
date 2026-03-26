@@ -12,7 +12,7 @@ function VerifyCodeContent() {
   const params = useSearchParams()
   const email = params.get('email') ?? ''
 
-  const [digits, setDigits] = useState<string[]>(['', '', '', '', '', ''])
+  const [digits, setDigits] = useState<string[]>(['', '', '', '', '', '', '', ''])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [attempts, setAttempts] = useState(0)
@@ -41,7 +41,7 @@ function VerifyCodeContent() {
     const newDigits = [...digits]
     newDigits[index] = value
     setDigits(newDigits)
-    if (value && index < 5) {
+    if (value && index < 7) {
       inputRefs.current[index + 1]?.focus()
     }
   }
@@ -54,19 +54,19 @@ function VerifyCodeContent() {
 
   function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault()
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 8)
     const newDigits = [...digits]
     for (let i = 0; i < pasted.length; i++) {
       newDigits[i] = pasted[i]
     }
     setDigits(newDigits)
-    const next = Math.min(pasted.length, 5)
+    const next = Math.min(pasted.length, 7)
     inputRefs.current[next]?.focus()
   }
 
   const handleVerify = useCallback(async () => {
     const token = digits.join('')
-    if (token.length < 6) return
+    if (token.length < 8) return
     setLoading(true)
     setError('')
 
@@ -98,7 +98,7 @@ function VerifyCodeContent() {
     setSecondsLeft(EXPIRE_SECONDS)
     setAttempts(0)
     setError('')
-    setDigits(['', '', '', '', '', ''])
+    setDigits(['', '', '', '', '', '', '', ''])
     setResent(true)
     setTimeout(() => setResent(false), 4000)
     inputRefs.current[0]?.focus()
@@ -166,7 +166,7 @@ function VerifyCodeContent() {
 
           <button
             onClick={handleVerify}
-            disabled={loading || digits.join('').length < 6 || attempts >= 3}
+            disabled={loading || digits.join('').length < 8 || attempts >= 3}
             className="glass-button-primary w-full py-3 rounded-xl font-semibold text-sm mb-4"
           >
             {loading ? 'Prüfen...' : 'Code bestätigen'}
