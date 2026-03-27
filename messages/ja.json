@@ -1,8 +1,218 @@
 {
-  "nav": { "features": "機能", "pricing": "料金", "tutorial": "チュートリアル", "community": "コミュニティ", "support": "サポート", "faq": "よくある質問", "dashboard": "ダッシュボード", "login": "ログイン", "register": "始める" },
-  "hero": { "badge": "AIゲームビルダー", "subtitle": "ゲームを説明して。XERONが作ります。", "cta_primary": "無料で始める →", "cta_secondary": "デモを見る" },
-  "generate": { "title": "ゲームを生成", "placeholder": "Robloxゲームを詳しく説明してください...", "hint": "Ctrl+Enterで生成", "button": "ゲームを生成 →", "generating": "生成中...", "cost": "この生成のコスト:", "credits": "クレジット" },
-  "sidebar": { "generate": "ゲーム生成", "script": "スクリプト作成", "ui": "UI作成", "fix": "ゲーム修正", "clean": "クリーン", "diagnose": "診断", "projects": "マイプロジェクト", "account": "アカウント" },
-  "credits": { "buy": "クレジット購入", "upgrade": "プランアップ", "reset_in": "リセット", "days": "日", "hours": "時間", "sub_credits": "サブクレジット", "bonus_credits": "ボーナスクレジット" },
-  "common": { "loading": "読み込み中...", "error": "エラーが発生しました", "save": "保存", "cancel": "キャンセル", "back": "戻る", "copy": "コピー", "download": "ダウンロード", "open": "開く" }
+  "nav": {
+    "features": "機能",
+    "pricing": "料金",
+    "tutorial": "Tutorial",
+    "community": "Community",
+    "support": "Support",
+    "faq": "FAQ",
+    "changelog": "Changelog",
+    "status": "Status",
+    "dashboard": "Dashboard",
+    "login": "ログイン",
+    "register": "無料で始める"
+  },
+  "hero": {
+    "badge": "The Most Advanced Roblox AI Platform",
+    "headline": "XERON ENGINE",
+    "subtitle": "説明するだけ。XERONが作る。",
+    "subtext": "Professional games. Zero code needed.",
+    "cta_primary": "無料で始める",
+    "cta_secondary": "Watch Demo",
+    "social_proof_1": "10,000+ Games Generated",
+    "social_proof_2": "4.9/5 from 500+ Creators",
+    "social_proof_3": "Avg. 2 Min Generation"
+  },
+  "modes": {
+    "generate": "Generate Game",
+    "script": "Create Script",
+    "ui": "Create UI",
+    "fix": "Fix Game",
+    "clean": "Clean Explorer",
+    "diagnose": "Diagnose"
+  },
+  "credits": {
+    "balance": "Credits",
+    "buy": "Buy Credits",
+    "upgrade": "Upgrade Plan",
+    "tooltip": "Click for Credits & Plans",
+    "empty": "You're out of credits",
+    "low": "Running low on credits"
+  },
+  "dashboard": {
+    "new_project": "✦ New Project",
+    "recent_projects": "Recent Projects",
+    "my_projects": "My Projects",
+    "achievements": "Achievements",
+    "shop": "Shop",
+    "api": "API Access",
+    "account": "Account",
+    "streak": "Day Streak",
+    "notifications": "Notifications"
+  },
+  "modes_labels": {
+    "generate_game": "Generate Game",
+    "create_script": "Create Script",
+    "create_ui": "Create UI",
+    "fix_game": "Fix Game",
+    "clean_explorer": "Clean Explorer",
+    "diagnose": "Diagnose"
+  },
+  "generate": {
+    "title": "Generate Game",
+    "placeholder": "Describe your Roblox game... e.g. 'A spooky haunted house obby with moving platforms and jump scares'",
+    "quick_prompt": "Quick Prompt",
+    "prompt_builder": "Prompt Builder",
+    "generate_btn": "✦ Generate Game",
+    "credits_cost": "50 cr",
+    "pro_only": "Pro+ Required",
+    "pro_only_desc": "Game generation is exclusive to Pro and Enterprise plans.",
+    "upgrade_now": "Upgrade Now",
+    "quality_standard": "Standard",
+    "quality_highend": "High-End Graphics (+150 cr)",
+    "chars": "chars",
+    "words": "words",
+    "ctrl_enter": "Ctrl+Enter to generate"
+  },
+  "shop": {
+    "title": "XERON Shop",
+    "subscriptions": "Subscriptions",
+    "credit_packs": "Credit Packs",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearly_discount": "-20%",
+    "per_month": "/month",
+    "per_year": "/year",
+    "credits_per_month": "credits/month",
+    "coupon_placeholder": "Enter coupon code...",
+    "coupon_apply": "Apply",
+    "coupon_success": "Code applied!",
+    "coupon_error": "Invalid or already used code",
+    "credit_pack_warning": "Credit Packs are only usable for Scripts & UI. Game Generation requires Pro or Enterprise.",
+    "get_plan": "Get {plan}",
+    "start_free": "Start Free",
+    "most_popular": "Most Popular",
+    "current_plan": "Current Plan"
+  },
+  "auth": {
+    "login_title": "おかえりなさい",
+    "login_subtitle": "Sign in to your XERON account",
+    "register_title": "Start Building",
+    "register_subtitle": "Create your free XERON account",
+    "email": "メールアドレス",
+    "password": "Password",
+    "username": "Username (optional)",
+    "sign_in": "ログイン",
+    "create_account": "Create Account",
+    "forgot_password": "Forgot password?",
+    "no_account": "Don't have an account?",
+    "have_account": "Already have an account?",
+    "start_free": "Start Free →",
+    "sign_in_link": "Sign In",
+    "or": "OR",
+    "discord_login": "Continue with Discord",
+    "newsletter": "Send me tips and updates via email",
+    "terms_notice": "By registering, you agree to our",
+    "terms_link": "Terms of Service",
+    "and": "and",
+    "privacy_link": "Privacy Policy",
+    "verify_title": "Check Your Email",
+    "verify_subtitle": "Enter the 6-digit code we sent to",
+    "verify_btn": "Verify Code",
+    "resend": "Resend code",
+    "resend_in": "Resend in {seconds}s"
+  },
+  "community": {
+    "title": "Join The XERON Community",
+    "subtitle": "Connect with thousands of Roblox creators",
+    "free_credits_title": "🪙 Earn 10 Credits Per Platform",
+    "free_credits_desc": "Follow us on social media and earn free credits",
+    "discord_bonus": "🪙 10 Credits Bonus",
+    "go_discord": "Go to Discord",
+    "max_credits": "Maximum: 50 Credits (5 platforms × 10 Credits)",
+    "once_per_platform": "Each platform can only be redeemed once."
+  },
+  "support": {
+    "title": "Support",
+    "subtitle": "We're here to help",
+    "discord_title": "Discord Community",
+    "discord_desc": "Fastest response — join our community",
+    "email_title": "Email Support",
+    "email_desc": "support@xeron-labs.com",
+    "docs_title": "Documentation",
+    "docs_desc": "Guides, tutorials, and API reference"
+  },
+  "tutorial": {
+    "title": "XERON Tutorial",
+    "subtitle": "Everything you need to start building"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "filter_all": "All",
+    "filter_unlocked": "Unlocked",
+    "filter_locked": "Locked"
+  },
+  "affiliate": {
+    "title": "Affiliate Program",
+    "subtitle": "Earn 20% commission on every referral",
+    "your_link": "Your Referral Link",
+    "copy_link": "Copy Link",
+    "earnings": "Total Earnings",
+    "referrals": "Total Referrals",
+    "commission": "20% Commission"
+  },
+  "api": {
+    "title": "API Access",
+    "your_key": "Your API Key",
+    "show_key": "Show Key",
+    "hide_key": "Hide Key",
+    "copy_key": "Copy Key",
+    "regenerate": "Regenerate Key",
+    "usage_this_month": "Calls This Month",
+    "rate_limit": "Rate Limit"
+  },
+  "social": {
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "discord": "Discord",
+    "instagram": "Instagram",
+    "x": "X (Twitter)"
+  },
+  "coupon": {
+    "enter": "Enter coupon code",
+    "apply": "Apply",
+    "valid": "Code applied successfully!",
+    "invalid": "Invalid or already used code",
+    "loading": "Validating..."
+  },
+  "legal": {
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "imprint": "Imprint",
+    "withdrawal": "Right of Withdrawal",
+    "cookie_settings": "Cookie Settings"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "not_found": "Page not found",
+    "unauthorized": "Please sign in to continue",
+    "insufficient_credits": "Not enough credits. Buy more to continue.",
+    "plan_required": "This feature requires a Pro or Enterprise plan."
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "Delete",
+    "edit": "Edit",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or"
+  }
 }
