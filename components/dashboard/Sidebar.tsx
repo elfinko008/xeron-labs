@@ -1,191 +1,528 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { createClient, type Profile } from '@/lib/supabase'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Sparkles,
+  Code2,
+  Layout,
+  Wrench,
+  Trash2,
+  Stethoscope,
+  FolderOpen,
+  Trophy,
+  ShoppingBag,
+  Zap,
+  BarChart2,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Circle,
+} from 'lucide-react'
 
-const PLAN_MAX_CREDITS: Record<string, number> = {
-  free: 10,
-  starter: 100,
-  pro: 500,
-  enterprise: 1000,
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface SidebarProps {
+  activeMode: string
+  onModeChange: (mode: string) => void
+  credits: number
+  plan: string
+  streakDays: number
 }
 
-export default function DashboardSidebar({ profile }: { profile: Profile }) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const maxCredits = PLAN_MAX_CREDITS[profile.plan] ?? 10
-  const creditPct = Math.min((profile.credits / maxCredits) * 100, 100)
-  const purchasedCredits = profile.purchased_credits ?? 0
-  const discordClaimed = profile.discord_credits_claimed ?? false
+interface NavItem {
+  id: string
+  label: string
+  icon: React.ReactNode
+  creditCost?: string
+  badge?: string
+  badgeVariant?: 'default' | 'pro' | 'new'
+  separator?: false
+}
 
-  async function handleLogout() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+interface SeparatorItem {
+  separator: true
+  id: string
+}
+
+type NavEntry = NavItem | SeparatorItem
+
+// ─── Recent Projects ─────────────────────────────────────────────────────────
+
+const RECENT_PROJECTS = [
+  { id: '1', name: 'Zombie Survival RPG', icon: '🎮', status: 'active' },
+  { id: '2', name: 'Space Shooter Pro', icon: '🚀', status: 'building' },
+  { id: '3', name: 'Fantasy Quest Arena', icon: '⚔️', status: 'active' },
+  { id: '4', name: 'Neon Racing League', icon: '🏎️', status: 'paused' },
+  { id: '5', name: 'Mystery Dungeon', icon: '🗺️', status: 'draft' },
+]
+
+const STATUS_COLORS: Record<string, string> = {
+  active:   '#4ADE80',
+  building: 'var(--gold-400)',
+  paused:   'var(--plat-400)',
+  draft:    'var(--t-3)',
+}
+
+// ─── Nav Items ────────────────────────────────────────────────────────────────
+
+const NAV_ITEMS: NavEntry[] = [
+  { id: 'generate',   label: 'Generate Game', icon: <Sparkles size={18} />, creditCost: '50 cr',   badge: 'Pro+', badgeVariant: 'pro' },
+  { id: 'script',     label: 'Script',         icon: <Code2    size={18} />, creditCost: '10 cr' },
+  { id: 'ui',         label: 'UI',             icon: <Layout   size={18} />, creditCost: '10 cr' },
+  { id: 'fix',        label: 'Fix',            icon: <Wrench   size={18} />, creditCost: '15–50 cr' },
+  { id: 'clean',      label: 'Clean',          icon: <Trash2   size={18} />, creditCost: '10 cr' },
+  { id: 'diagnose',   label: 'Diagnose',       icon: <Stethoscope size={18} />, creditCost: '5 cr' },
+  { separator: true, id: 'sep1' },
+  { id: 'projects',   label: 'My Projects',    icon: <FolderOpen  size={18} /> },
+  { id: 'achievements', label: 'Achievements', icon: <Trophy      size={18} /> },
+  { id: 'shop',       label: 'Shop',           icon: <ShoppingBag size={18} />, badge: 'New', badgeVariant: 'new' },
+  { id: 'api',        label: 'API',            icon: <Zap         size={18} />, badge: 'Pro+', badgeVariant: 'pro' },
+  { id: 'account',    label: 'Account',        icon: <BarChart2   size={18} /> },
+]
+
+const PLAN_MAX_CREDITS: Record<string, number> = {
+  free: 10, starter: 100, pro: 500, enterprise: 2000,
+}
+
+// ─── Animated Credit Counter ──────────────────────────────────────────────────
+
+function AnimatedNumber({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0)
+  const prevRef = useRef(0)
+
+  useEffect(() => {
+    const from = prevRef.current
+    const to = value
+    prevRef.current = value
+
+    if (from === to) { setDisplay(to); return }
+
+    const duration = 900
+    const start = performance.now()
+
+    const tick = (now: number) => {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplay(Math.round(from + (to - from) * eased))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+
+    requestAnimationFrame(tick)
+  }, [value])
+
+  return <>{display.toLocaleString()}</>
+}
+
+// ─── Credit Widget ────────────────────────────────────────────────────────────
+
+function CreditWidget({
+  credits,
+  plan,
+  streakDays,
+  collapsed,
+}: {
+  credits: number
+  plan: string
+  streakDays: number
+  collapsed: boolean
+}) {
+  const router = useRouter()
+  const maxCredits = PLAN_MAX_CREDITS[plan.toLowerCase()] ?? 100
+  const pct = Math.min((credits / maxCredits) * 100, 100)
+
+  if (collapsed) {
+    return (
+      <div
+        className="flex flex-col items-center gap-2 px-2 py-4 cursor-pointer"
+        style={{ borderTop: '1px solid var(--glass-border)' }}
+        onClick={() => router.push('/shop')}
+        title="Credits & Plans"
+      >
+        <span style={{ fontSize: 22 }}>🪙</span>
+        <span className="credit-number" style={{ fontSize: 12 }}>
+          <AnimatedNumber value={credits} />
+        </span>
+      </div>
+    )
   }
 
-  const navLinks = [
-    {
-      href: '/dashboard',
-      label: 'Generieren',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-        </svg>
-      ),
-    },
-    {
-      href: '/dashboard/projects',
-      label: 'Projekte',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-        </svg>
-      ),
-    },
-    {
-      href: '/dashboard/account',
-      label: 'Account',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-        </svg>
-      ),
-    },
-  ]
-
   return (
-    <aside className="glass-sidebar w-70 flex-shrink-0 flex flex-col" style={{ width: 280 }}>
-      {/* Logo */}
-      <div className="px-6 py-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
-        <Link href="/" className="font-display text-xl">
-          <span className="text-gradient-red">XERON</span>
-          <span className="text-white"> Engine</span>
-        </Link>
+    <div
+      style={{
+        borderTop: '1px solid var(--glass-border)',
+        padding: '16px',
+      }}
+    >
+      {/* Coin + count — click goes to /shop */}
+      <div
+        className="flex items-center gap-3 cursor-pointer mb-3"
+        onClick={() => router.push('/shop')}
+        style={{ borderRadius: 14, padding: '10px 12px', background: 'var(--glass-1)', border: '1px solid var(--glass-border-gold)', transition: 'background 0.2s' }}
+        onMouseEnter={e => (e.currentTarget.style.background = 'var(--glass-2)')}
+        onMouseLeave={e => (e.currentTarget.style.background = 'var(--glass-1)')}
+      >
+        <span className="credit-coin" style={{ fontSize: 28, lineHeight: 1 }}>🪙</span>
+        <div>
+          <div className="credit-number" style={{ fontSize: 22, lineHeight: 1 }}>
+            <AnimatedNumber value={credits} />
+          </div>
+          <div className="t-label" style={{ fontSize: 10, marginTop: 2 }}>credits available</div>
+        </div>
+        <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+          <span className="lg-badge" style={{ fontSize: 10, padding: '2px 8px', textTransform: 'uppercase' }}>
+            {plan}
+          </span>
+          {streakDays > 0 && (
+            <span style={{ fontSize: 11, color: 'var(--gold-400)' }}>
+              🔥 {streakDays}d
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="flex-1 flex flex-col gap-2 p-4 overflow-y-auto">
+      {/* Progress bar */}
+      <div className="progress-bar" style={{ marginBottom: 12 }}>
+        <div
+          className="progress-fill"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--t-3)', marginBottom: 12, textAlign: 'right' }}>
+        {credits} / {maxCredits}
+      </div>
+
+      {/* Action buttons */}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          className="btn-luxury"
+          style={{ flex: 1, padding: '10px 12px', fontSize: 12, borderRadius: 12 }}
+          onClick={() => router.push('/shop')}
+        >
+          Buy Credits
+        </button>
+        <button
+          className="btn-glass"
+          style={{ flex: 1, padding: '10px 12px', fontSize: 12, borderRadius: 12 }}
+          onClick={() => router.push('/shop')}
+        >
+          Upgrade
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Sidebar Component ────────────────────────────────────────────────────────
+
+export default function Sidebar({
+  activeMode,
+  onModeChange,
+  credits,
+  plan,
+  streakDays,
+}: SidebarProps) {
+  const [collapsed, setCollapsed] = useState(false)
+  const router = useRouter()
+
+  const EXPANDED_W = 268
+  const COLLAPSED_W = 72
+
+  return (
+    <motion.aside
+      className="lg-sidebar"
+      initial={false}
+      animate={{ width: collapsed ? COLLAPSED_W : EXPANDED_W }}
+      transition={{ type: 'spring', stiffness: 320, damping: 38 }}
+      style={{
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        position: 'relative',
+        overflow: 'hidden',
+        minWidth: collapsed ? COLLAPSED_W : EXPANDED_W,
+      }}
+    >
+      {/* Toggle button */}
+      <button
+        onClick={() => setCollapsed(v => !v)}
+        style={{
+          position: 'absolute',
+          top: 22,
+          right: -12,
+          zIndex: 50,
+          width: 24,
+          height: 24,
+          borderRadius: '50%',
+          background: 'var(--depth-3)',
+          border: '1px solid var(--glass-border-gold)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+          color: 'var(--gold-400)',
+        }}
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        {collapsed
+          ? <ChevronRight size={12} />
+          : <ChevronLeft  size={12} />
+        }
+      </button>
+
+      {/* Inner scroll container */}
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+
+        {/* Logo row */}
+        <div
+          style={{
+            padding: collapsed ? '16px 0' : '16px 16px',
+            borderBottom: '1px solid var(--glass-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            minHeight: 60,
+            flexShrink: 0,
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {collapsed ? (
+              <motion.span
+                key="icon"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ fontSize: 20, color: 'var(--gold-400)' }}
+              >
+                ✦
+              </motion.span>
+            ) : (
+              <motion.span
+                key="text"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="t-headline"
+                style={{ fontSize: 17, whiteSpace: 'nowrap' }}
+              >
+                <span className="text-gold-gradient">XERON</span>
+                <span style={{ color: 'var(--t-2)', fontWeight: 400 }}> Engine</span>
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* New Project button */}
+        <div
+          style={{
+            padding: collapsed ? '12px 10px' : '12px 12px',
+            flexShrink: 0,
+            borderBottom: '1px solid var(--glass-border)',
+          }}
+        >
+          {collapsed ? (
+            <button
+              className="btn-luxury"
+              style={{ width: '100%', padding: '10px 0', borderRadius: 12, justifyContent: 'center' }}
+              onClick={() => router.push('/dashboard/new')}
+              title="New Project"
+            >
+              <Plus size={16} />
+            </button>
+          ) : (
+            <button
+              className="btn-luxury btn-luxury-pulse"
+              style={{ width: '100%', padding: '12px 16px', borderRadius: 14, fontSize: 14, justifyContent: 'center' }}
+              onClick={() => router.push('/dashboard/new')}
+            >
+              ✦ New Project
+            </button>
+          )}
+        </div>
+
+        {/* Recent Projects */}
+        {!collapsed && (
+          <div
+            style={{
+              padding: '10px 12px 6px',
+              flexShrink: 0,
+            }}
+          >
+            <div className="t-label" style={{ fontSize: 10, marginBottom: 6, paddingLeft: 4 }}>
+              Recent Projects
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto', maxHeight: 140 }}>
+              {RECENT_PROJECTS.map(proj => (
+                <button
+                  key={proj.id}
+                  onClick={() => router.push(`/dashboard/projects/${proj.id}`)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '6px 8px',
+                    borderRadius: 10,
+                    background: 'transparent',
+                    border: '1px solid transparent',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'background 0.15s, border-color 0.15s',
+                    width: '100%',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = 'var(--glass-1)'
+                    e.currentTarget.style.borderColor = 'var(--glass-border)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.borderColor = 'transparent'
+                  }}
+                >
+                  <span style={{ fontSize: 14, flexShrink: 0 }}>{proj.icon}</span>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      color: 'var(--t-2)',
+                      flex: 1,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {proj.name}
+                  </span>
+                  <Circle
+                    size={7}
+                    fill={STATUS_COLORS[proj.status] ?? 'var(--t-3)'}
+                    stroke="none"
+                    style={{ flexShrink: 0 }}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="lg-divider" style={{ margin: '4px 0', flexShrink: 0 }} />
+
         {/* Navigation */}
-        <nav className="space-y-1">
-          {navLinks.map((link) => {
-            const active = pathname === link.href
+        <nav
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: collapsed ? '8px 8px' : '8px 10px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          {NAV_ITEMS.map(entry => {
+            if ('separator' in entry && entry.separator) {
+              return (
+                <div
+                  key={entry.id}
+                  className="lg-divider"
+                  style={{ margin: '6px 0' }}
+                />
+              )
+            }
+
+            const item = entry as NavItem
+            const isActive = activeMode === item.id
+
             return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all"
+              <button
+                key={item.id}
+                onClick={() => onModeChange(item.id)}
+                title={collapsed ? `${item.label}${item.creditCost ? ` [${item.creditCost}]` : ''}` : undefined}
                 style={{
-                  background: active ? 'rgba(233,69,96,0.15)' : 'transparent',
-                  color: active ? '#ffffff' : 'var(--text-secondary)',
-                  border: active ? '1px solid rgba(233,69,96,0.3)' : '1px solid transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: collapsed ? 0 : 10,
+                  padding: collapsed ? '10px 0' : '9px 10px',
+                  borderRadius: 12,
+                  background: isActive ? 'rgba(212,160,23,0.08)' : 'transparent',
+                  border: isActive ? '1px solid rgba(212,160,23,0.20)' : '1px solid transparent',
+                  borderLeft: isActive ? '3px solid var(--gold-400)' : '3px solid transparent',
+                  cursor: 'pointer',
+                  color: isActive ? 'var(--gold-300)' : 'var(--t-2)',
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  transition: 'all 0.2s',
+                  width: '100%',
+                  minHeight: 38,
+                }}
+                onMouseEnter={e => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'var(--glass-1)'
+                    e.currentTarget.style.color = 'var(--t-1)'
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = 'var(--t-2)'
+                  }
                 }}
               >
-                {link.icon}
-                {link.label}
-              </Link>
+                {/* Icon */}
+                <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                  {item.icon}
+                </span>
+
+                {/* Label + badges */}
+                <AnimatePresence>
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: 'auto' }}
+                      exit={{ opacity: 0, width: 0 }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        overflow: 'hidden',
+                        flex: 1,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      <span style={{ fontSize: 13, fontWeight: isActive ? 600 : 400 }}>
+                        {item.label}
+                      </span>
+
+                      {item.creditCost && (
+                        <span style={{ fontSize: 10, color: 'var(--t-3)', marginLeft: 'auto' }}>
+                          [{item.creditCost}]
+                        </span>
+                      )}
+
+                      {item.badge && (
+                        <span
+                          className={item.badgeVariant === 'pro' ? 'lg-badge' : 'lg-badge-pulse'}
+                          style={{ fontSize: 9, padding: '2px 6px', marginLeft: item.creditCost ? 4 : 'auto' }}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
             )
           })}
         </nav>
 
-        <div className="my-2 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
-
-        {/* Credits */}
-        <div className="glass-card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Abo-Credits</span>
-            <span className="text-sm font-display" style={{ color: 'var(--accent-red)' }}>
-              {profile.credits}
-            </span>
-          </div>
-          <div className="progress-bar mb-3">
-            <div className="progress-bar-fill" style={{ width: `${creditPct}%` }} />
-          </div>
-          {purchasedCredits > 0 && (
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Gekaufte Credits</span>
-              <span className="text-xs font-medium" style={{ color: '#00d4ff' }}>{purchasedCredits}</span>
-            </div>
-          )}
-          <div className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
-            Plan: <span className="capitalize text-white">{profile.plan}</span>
-            {' · '}{profile.credits} / {maxCredits}
-          </div>
-          <Link
-            href="/dashboard/account?tab=credits"
-            className="glass-button-primary w-full py-2 rounded-xl text-xs font-semibold text-center block"
-          >
-            Credits kaufen
-          </Link>
-          <Link
-            href="/dashboard/account?tab=plan"
-            className="glass-button w-full py-2 rounded-xl text-xs font-semibold text-center block mt-2"
-          >
-            Plan upgraden
-          </Link>
-        </div>
-
-        {/* Discord Bonus */}
-        <div className="glass-card p-4">
-          <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Bonusse</div>
-          {discordClaimed ? (
-            <div className="flex items-center gap-2 text-xs" style={{ color: '#00ff80' }}>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Discord verbunden ✓
-            </div>
-          ) : (
-            <a
-              href="/api/discord/connect"
-              className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl transition-all"
-              style={{ background: '#5865F2', color: '#ffffff' }}
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/>
-              </svg>
-              Discord beitreten +10 Credits
-            </a>
-          )}
-        </div>
-
-        {/* Plugin */}
-        <div className="glass-card p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Roblox Plugin</span>
-            <span className="glass-badge-green text-xs">Bereit</span>
-          </div>
-          <a
-            href="/plugin/init.server.lua"
-            download
-            className="flex items-center gap-2 text-xs transition-colors hover:text-white"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-            Plugin herunterladen
-          </a>
-        </div>
+        {/* Credit Widget */}
+        <CreditWidget
+          credits={credits}
+          plan={plan}
+          streakDays={streakDays}
+          collapsed={collapsed}
+        />
       </div>
-
-      {/* Logout */}
-      <div className="p-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-        <div className="text-xs mb-3 truncate" style={{ color: 'var(--text-muted)' }}>
-          {profile.email}
-        </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 text-sm transition-colors hover:text-white w-full"
-          style={{ color: 'var(--text-secondary)' }}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-          </svg>
-          Abmelden
-        </button>
-      </div>
-    </aside>
+    </motion.aside>
   )
 }

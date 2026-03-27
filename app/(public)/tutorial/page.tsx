@@ -1,348 +1,292 @@
-import Link from 'next/link'
+import { Navbar } from '@/components/shared/Navbar'
+import { Footer } from '@/components/shared/Footer'
+import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
+import { ParticleSystem } from '@/components/landing/ParticleSystem'
 
 export const metadata = {
   title: 'Tutorial — XERON Engine',
-  description: 'Lerne wie du perfekte Prompts für maximale Spielqualität schreibst.',
+  description: 'Step-by-step guide for using XERON Engine. Learn how to generate games, scripts, and earn free credits.',
 }
 
-const sections = [
+const STEPS = [
   {
-    title: '1. Spieltyp angeben',
-    content: (
-      <div className="space-y-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-        <p>Starte immer mit dem Spieltyp:</p>
-        <div className="flex flex-wrap gap-2 mt-3">
-          {['Obby', 'Roleplay', 'Horror', 'Racing', 'Shooter', 'Sandbox'].map((t) => (
-            <span key={t} className="glass-badge">{t}</span>
-          ))}
-        </div>
-        <p className="mt-3">Beispiel: <code className="text-white">&quot;Erstelle ein Roleplay-Spiel...&quot;</code></p>
-      </div>
-    ),
+    step: '01',
+    title: 'Create Your Account',
+    description:
+      'Sign up at xeron-labs.com. The Free plan gives you 10 credits/month immediately — no credit card required.',
   },
   {
-    title: '2. Größe in Studs angeben',
-    content: (
-      <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
-        <p>Roblox verwendet Studs als Einheit. Empfohlene Größen:</p>
-        <ul className="space-y-1 mt-2">
-          <li>• Klein: <span className="text-white">100x100 Studs</span> (Obby, Mini-Spiel)</li>
-          <li>• Mittel: <span className="text-white">300x300 Studs</span> (Roleplay, Horror)</li>
-          <li>• Groß: <span className="text-white">500x500 Studs</span> (Open World, Racing)</li>
-        </ul>
-      </div>
-    ),
+    step: '02',
+    title: 'Choose Your Generation Mode',
+    description:
+      'Navigate to the Dashboard and select a mode: Game Generation (Pro+), Script, UI, Fix, Clean, or Diagnose. Each has different credit costs.',
   },
   {
-    title: '3. Biom wählen',
-    content: (
-      <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
-        <p>Das Terrain-Biom bestimmt Aussehen und Atmosphäre:</p>
-        <div className="grid grid-cols-2 gap-2 mt-3">
-          {[
-            { name: 'Wald', desc: 'Bäume, Hügel, grünes Terrain' },
-            { name: 'Stadt', desc: 'Flaches Terrain, urbane Gebäude' },
-            { name: 'Wüste', desc: 'Sand, Felsen, weite Flächen' },
-            { name: 'Space', desc: 'Dunkles Terrain, Krater, Sterne' },
-            { name: 'Unterwasser', desc: 'Korallen, Sand, Meeresgrund' },
-            { name: 'Schnee', desc: 'Weiße Landschaft, Eis, Berge' },
-          ].map((b) => (
-            <div key={b.name} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <div className="font-medium text-white text-xs mb-1">{b.name}</div>
-              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{b.desc}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
+    step: '03',
+    title: 'Write Your Prompt',
+    description:
+      'Describe what you want in plain language. Include game type, size in Studs, visual style, gameplay mechanics, and any special features. The more detail, the better the result.',
   },
   {
-    title: '4. Assets beschreiben',
-    content: (
-      <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
-        <p>Nenne konkret welche Objekte du möchtest:</p>
-        <ul className="space-y-1 mt-2">
-          <li>• <span className="text-white">Fahrzeuge:</span> &quot;3 Autos, 1 Motorrad, 2 Trucks&quot;</li>
-          <li>• <span className="text-white">Gebäude:</span> &quot;5 Häuser, 1 Krankenhaus, 1 Polizeiwache&quot;</li>
-          <li>• <span className="text-white">NPCs:</span> &quot;10 zufällig laufende NPCs&quot;</li>
-          <li>• <span className="text-white">Waffen:</span> &quot;Pistole, Rifle, Granate mit Damage-System&quot;</li>
-        </ul>
-      </div>
-    ),
+    step: '04',
+    title: 'Watch the AI Work',
+    description:
+      'A live terminal shows every step of the generation. The AI creates a detailed plan — terrain, buildings, scripts, lighting, assets — and executes it in real time.',
   },
   {
-    title: '5. Spielmechaniken',
-    content: (
-      <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
-        <p>Definiere die Spiellogik:</p>
-        <ul className="space-y-1 mt-2">
-          <li>• <span className="text-white">Leaderboard:</span> &quot;Leaderboard mit Geld und Level&quot;</li>
-          <li>• <span className="text-white">Teams:</span> &quot;2 Teams: Polizei vs. Gangster&quot;</li>
-          <li>• <span className="text-white">Checkpoints:</span> &quot;Checkpoint-System mit Respawn&quot;</li>
-          <li>• <span className="text-white">Shops:</span> &quot;Fahrzeug-Shop mit DataStore&quot;</li>
-          <li>• <span className="text-white">Jobs:</span> &quot;Taxifahrer, Polizist, Arzt Jobs&quot;</li>
-        </ul>
-      </div>
-    ),
+    step: '05',
+    title: 'Import to Roblox Studio',
+    description:
+      'Once done, click "Open in Roblox Studio" or use the XERON Plugin. Search "XERON Engine" in the Roblox Plugin Marketplace to install it.',
   },
   {
-    title: '6. Atmosphäre & Lighting',
-    content: (
-      <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
-        <p>Steuere die visuelle Stimmung:</p>
-        <ul className="space-y-1 mt-2">
-          <li>• <span className="text-white">Tageszeit:</span> &quot;Sonnenuntergang (18:00 Uhr)&quot;</li>
-          <li>• <span className="text-white">Wetter:</span> &quot;Leichter Regen, Nebel&quot;</li>
-          <li>• <span className="text-white">Bloom:</span> &quot;Bloom-Effekt aktiviert&quot;</li>
-          <li>• <span className="text-white">Atmosphäre:</span> &quot;Haze: 0.3, Density: 0.5&quot;</li>
-        </ul>
-      </div>
-    ),
+    step: '06',
+    title: 'Iterate & Refine',
+    description:
+      'Use Fix mode to repair scripts, Script mode to add features, and Diagnose to understand what each part does. Build on top of the AI output.',
   },
 ]
 
-const ROLEPLAY_EXAMPLE = `Erstelle ein Roleplay-Spiel in einer mittelalterlichen Fantasiestadt.
-Terrain: 400x400 Studs, Wald-Biom mit Hügeln, Fluss durch die Mitte.
-Atmosphäre: Abendrot (19:00 Uhr), leichter Nebel, Bloom-Effekt.
-Gebäude: Schloss auf einem Hügel, Marktplatz mit 8 Ständen, Taverne, Schmiede, Kirche, 15 Häuser.
-NPCs: 20 Bürger die zufällig durch die Stadt laufen.
-Scripts: Leaderboard (Gold, Level, Ruf), Shop-System im Marktplatz (DataStore), Tür-Script für alle Gebäude.
-GUI: Hauptmenü mit Spieler-Stats, Minimap, Benachrichtigungen.
-Spawnpoints: 5 verschiedene Spawn-Punkte in der Stadt.`
+const MODES = [
+  { name: 'Game Generation', cost: '50 credits', plan: 'Pro+', desc: 'Full game world with terrain, buildings, scripts, lighting and assets.' },
+  { name: 'Script', cost: '10 credits', plan: 'All', desc: 'Generate Lua scripts for any gameplay mechanic.' },
+  { name: 'UI', cost: '10 credits', plan: 'All', desc: 'Create complete UI layouts with buttons, frames and menus.' },
+  { name: 'Fix', cost: '15–50 credits', plan: 'All', desc: 'Analyze and repair broken Lua scripts. Quick Fix (Haiku) or Deep Fix (Sonnet).' },
+  { name: 'Clean', cost: '10 credits', plan: 'All', desc: 'Optimize and refactor existing code for readability and performance.' },
+  { name: 'Diagnose', cost: '5 credits', plan: 'All', desc: 'Get a plain-language explanation of what any script does.' },
+]
 
-const OBBY_EXAMPLE = `Erstelle einen Obby mit 30 Stages.
-Terrain: 150x800 Studs, Wolken-Biom, fliegende Inseln.
-Atmosphäre: Tag, klarer Himmel, leichter Fog-Effekt.
-Stages: Progressiv schwieriger. Stage 1-10: Grundsprünge. Stage 11-20: Bewegliche Plattformen. Stage 21-30: Rotierende Objekte, Kill-Bricks.
-Scripts: Checkpoint-System mit DataStore (Fortschritt wird gespeichert), Leaderboard (Stages abgeschlossen), Respawn am letzten Checkpoint.
-GUI: Stage-Anzeige, Timer, "Stage X abgeschlossen!" Benachrichtigung.
-Spawnpoints: Checkpoint pro Stage.`
+const CREDIT_COSTS = [
+  { action: 'Diagnose', credits: 5 },
+  { action: 'Script / UI / Clean', credits: 10 },
+  { action: 'Quick Fix', credits: 15 },
+  { action: 'Deep Fix', credits: 50 },
+  { action: 'Game Generation', credits: 50 },
+]
 
 export default function TutorialPage() {
   return (
-    <div className="min-h-screen">
-      {/* Navbar */}
-      <nav className="glass-nav sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-display text-xl">
-            <span className="text-gradient-red">XERON</span>
-            <span className="text-white"> Engine</span>
-          </Link>
-          <Link href="/dashboard" className="glass-button-primary px-5 py-2 rounded-xl text-sm font-medium">
-            Dashboard öffnen
-          </Link>
-        </div>
-      </nav>
+    <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
+      <LuxuryBackground />
+      <ParticleSystem count={20} />
 
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <div className="text-center mb-12">
-          <div className="glass-badge mb-4 inline-block">Tutorial</div>
-          <h1 className="font-display text-4xl mb-4">Bessere Prompts schreiben</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            So bekommst du maximale Spielqualität von XERON Engine
-          </p>
-        </div>
+      <Navbar />
 
-        {/* Was kostet was? */}
-        <div className="glass-card p-6 mb-8">
-          <h2 className="font-display text-xl mb-4">Was kostet was?</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--text-secondary)' }}>Aktion</th>
-                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--accent-red)' }}>Credits</th>
-                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--text-secondary)' }}>Mindest-Plan</th>
-                  <th className="text-left pb-3 font-medium" style={{ color: 'var(--text-secondary)' }}>KI-Modell</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { action: 'Script / UI',       credits: '10',  plan: 'Free',     model: 'Gemini Flash-Lite' },
-                  { action: 'Kleines Spiel',      credits: '25',  plan: 'Starter+', model: 'Claude Haiku' },
-                  { action: 'Normales Spiel',     credits: '50',  plan: 'Starter+', model: 'Claude Haiku' },
-                  { action: 'High-End Spiel',     credits: '200', plan: 'Pro+',     model: 'Claude Sonnet' },
-                  { action: 'Fix klein',          credits: '15',  plan: 'Starter+', model: 'Claude Haiku' },
-                  { action: 'Fix groß',           credits: '50',  plan: 'Starter+', model: 'Claude Sonnet' },
-                ].map((row) => (
-                  <tr key={row.action} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td className="py-2.5 pr-4 text-white">{row.action}</td>
-                    <td className="py-2.5 pr-4 font-display" style={{ color: 'var(--accent-red)' }}>{row.credits}</td>
-                    <td className="py-2.5 pr-4" style={{ color: 'var(--text-secondary)' }}>{row.plan}</td>
-                    <td className="py-2.5" style={{ color: 'var(--text-muted)' }}>{row.model}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <main style={{ position: 'relative', zIndex: 1 }}>
+        {/* Hero */}
+        <section className="section-pad-sm" style={{ paddingTop: '80px' }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
+            <span className="lg-badge" style={{ marginBottom: '20px' }}>Tutorial</span>
+            <h1 className="t-display" style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.6rem)', marginTop: '16px', marginBottom: '20px' }}>
+              Get Started with{' '}
+              <span className="text-gold-gradient">XERON Engine</span>
+            </h1>
+            <p className="t-body" style={{ maxWidth: '520px', margin: '0 auto', fontSize: '17px', color: 'var(--t-2)' }}>
+              From zero to a complete Roblox game in minutes. Follow this guide to master XERON Engine.
+            </p>
           </div>
-          <p className="text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
-            💡 Gekaufte Credit-Pakete funktionieren nur für Scripts &amp; UI — Spiele benötigen ein aktives Abo.
-          </p>
-        </div>
+        </section>
 
-        {/* Spieltypen erklärt */}
-        <div className="glass-card p-6 mb-4">
-          <h2 className="font-display text-lg mb-4">Spieltypen erklärt</h2>
-          <div className="grid grid-cols-2 gap-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            {[
-              { type: 'Obby', desc: 'Hindernisparcours mit Checkpoints' },
-              { type: 'Roleplay', desc: 'Offene Welt mit Jobs & NPCs' },
-              { type: 'Horror', desc: 'Grusige Atmosphäre, Jumpscares' },
-              { type: 'Racing', desc: 'Fahrzeuge, Strecken, Leaderboard' },
-              { type: 'Shooter', desc: 'Teams, Waffen, Kill-System' },
-              { type: 'Sandbox', desc: 'Freies Bauen & Erkunden' },
-            ].map((s) => (
-              <div key={s.type} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <div className="font-medium text-white mb-1">{s.type}</div>
-                <div className="text-xs">{s.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Der perfekte Prompt */}
-        <div className="glass-card p-6 mb-4">
-          <h2 className="font-display text-lg mb-4">Der perfekte Prompt</h2>
-          <div className="text-sm space-y-3" style={{ color: 'var(--text-secondary)' }}>
-            <p>Ein guter Prompt enthält immer diese 5 Elemente:</p>
-            <ol className="space-y-2 list-decimal list-inside">
-              <li><strong className="text-white">Spieltyp</strong> — z.B. &quot;Roleplay-Spiel&quot;</li>
-              <li><strong className="text-white">Terrain-Größe</strong> — z.B. &quot;400x400 Studs, Wald-Biom&quot;</li>
-              <li><strong className="text-white">Assets</strong> — konkrete Objekte, Gebäude, Fahrzeuge</li>
-              <li><strong className="text-white">Spielmechaniken</strong> — Leaderboard, DataStore, Teams</li>
-              <li><strong className="text-white">Atmosphäre</strong> — Tageszeit, Wetter, Lighting</li>
-            </ol>
-            <p className="mt-3">Je detaillierter dein Prompt, desto besser das Ergebnis. Nutze die Beispiel-Prompts unten als Vorlage.</p>
-          </div>
-        </div>
-
-        {/* Terrain & High-End */}
-        <div className="glass-card p-6 mb-4">
-          <h2 className="font-display text-lg mb-4">Terrain &amp; High-End Grafik</h2>
-          <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
-            <p>High-End Generierungen (200 Credits, Pro+) verwenden Claude Sonnet und erzeugen:</p>
-            <ul className="space-y-1 list-disc list-inside mt-2">
-              <li>Detailliertes Multi-Biom Terrain</li>
-              <li>Erweiterte Lighting-Einstellungen (Bloom, Atmosphere, ColorCorrection)</li>
-              <li>Komplexere Script-Architektur mit DataStore</li>
-              <li>Optimierten Code für mehr Spieler-Performance</li>
-            </ul>
-            <p className="mt-3">Für normale Spiele reicht Standard (50 Credits) völlig aus.</p>
-          </div>
-        </div>
-
-        {/* Fix-Modus */}
-        <div className="glass-card p-6 mb-4">
-          <h2 className="font-display text-lg mb-4">Fix-Modus richtig einsetzen</h2>
-          <div className="text-sm space-y-2" style={{ color: 'var(--text-secondary)' }}>
-            <p><strong className="text-white">Fix klein (15 Credits):</strong> Für einzelne Bugs, Script-Fehler oder kleine Anpassungen an bestehendem Code.</p>
-            <p><strong className="text-white">Fix groß (50 Credits):</strong> Für komplette Überarbeitungen, Performance-Optimierungen oder strukturelle Änderungen.</p>
-            <p className="mt-2">Beschreibe beim Fix immer genau: Was funktioniert nicht? Was soll es stattdessen tun?</p>
-          </div>
-        </div>
-
-        {/* Plugin Schritt für Schritt */}
-        <div className="glass-card p-6 mb-8">
-          <h2 className="font-display text-lg mb-4">Plugin Schritt für Schritt</h2>
-          <ol className="text-sm space-y-3 list-decimal list-inside" style={{ color: 'var(--text-secondary)' }}>
-            <li>Im Dashboard auf <strong className="text-white">&quot;Plugin herunterladen&quot;</strong> klicken</li>
-            <li>Die <code className="text-white">.rbxm</code> Datei speichern</li>
-            <li>Roblox Studio öffnen → <strong className="text-white">Plugins → Manage Plugins → Install from File</strong></li>
-            <li>Plugin mit deinem XERON-Account verbinden (Token aus Dashboard)</li>
-            <li>Nach der Generierung im Plugin auf <strong className="text-white">&quot;Sync&quot;</strong> klicken</li>
-            <li>Der Code erscheint automatisch im ServerScriptService</li>
-          </ol>
-        </div>
-
-        {/* Sektionen */}
-        <div className="space-y-4">
-          {sections.map((s) => (
-            <div key={s.title} className="glass-card p-6">
-              <h2 className="font-display text-lg mb-4">{s.title}</h2>
-              {s.content}
-            </div>
-          ))}
-        </div>
-
-        {/* Beispiel-Prompts */}
-        <div className="mt-10 space-y-6">
-          <h2 className="font-display text-2xl">Beispiel-Prompts</h2>
-
-          <div className="glass-card p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="glass-badge">Roleplay</span>
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Komplex · 15 Credits</span>
-            </div>
-            <pre className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-              {ROLEPLAY_EXAMPLE}
-            </pre>
-          </div>
-
-          <div className="glass-card p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="glass-badge">Obby</span>
-              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Mittel · 5–15 Credits</span>
-            </div>
-            <pre className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-              {OBBY_EXAMPLE}
-            </pre>
-          </div>
-        </div>
-
-        {/* Do's & Don'ts */}
-        <div className="mt-10">
-          <h2 className="font-display text-2xl mb-6">Do&apos;s &amp; Don&apos;ts</h2>
-          <div className="glass-card p-6 overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                  <th className="text-left pb-3 font-display" style={{ color: '#00ff80' }}>Do ✓</th>
-                  <th className="text-left pb-3 font-display" style={{ color: 'var(--accent-red)' }}>Don&apos;t ✗</th>
-                </tr>
-              </thead>
-              <tbody className="space-y-2">
-                {[
-                  ['Spieltyp + Terrain-Größe angeben', 'Nur "mach ein Spiel" schreiben'],
-                  ['Konkrete Gebäude & Assets benennen', 'Vage bleiben ("viele Sachen")'],
-                  ['Mechaniken detailliert beschreiben', 'Zu viele Features auf einmal'],
-                  ['Atmosphäre & Tageszeit festlegen', 'Widersprüchliche Anforderungen'],
-                  ['Leaderboard/DataStore explizit nennen', 'Englische Prompts mischen'],
-                ].map(([do_, dont], i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td className="py-2.5 pr-6" style={{ color: 'var(--text-secondary)' }}>{do_}</td>
-                    <td className="py-2.5" style={{ color: 'var(--text-muted)' }}>{dont}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Bild-Platzhalter */}
-        <div className="mt-10">
-          <h2 className="font-display text-2xl mb-6">Beispiel-Ergebnisse</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {[1, 2].map((n) => (
-              <div key={n} className="glass-card aspect-video flex items-center justify-center"
-                   style={{ minHeight: 180 }}>
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🖼️</div>
-                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                    Beispiel {n} · /images/tutorial/beispiel{n}.png
+        {/* Step-by-step guide */}
+        <section className="section-pad-sm" style={{ paddingTop: 0 }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px' }}>
+            <h2 className="t-headline" style={{ fontSize: '1.5rem', marginBottom: '24px' }}>Step-by-Step Guide</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {STEPS.map((step) => (
+                <div key={step.step} className="lg-card" style={{ padding: '24px 28px', display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+                  <span
+                    style={{
+                      fontFamily: '"Cormorant Garamond", serif',
+                      fontSize: '2.5rem',
+                      fontWeight: 700,
+                      color: 'var(--gold-400)',
+                      lineHeight: 1,
+                      opacity: 0.5,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {step.step}
+                  </span>
+                  <div>
+                    <h3 className="t-headline" style={{ fontSize: '17px', marginBottom: '8px' }}>{step.title}</h3>
+                    <p className="t-body" style={{ fontSize: '14px', color: 'var(--t-2)', lineHeight: '1.7', margin: 0 }}>{step.description}</p>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* CTA */}
-        <div className="mt-12 text-center">
-          <Link href="/register" className="glass-button-primary px-8 py-4 rounded-2xl font-semibold inline-block">
-            Jetzt kostenlos ausprobieren →
-          </Link>
-        </div>
-      </div>
+        {/* Generation Modes */}
+        <section className="section-pad-sm" style={{ paddingTop: 0 }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px' }}>
+            <h2 className="t-headline" style={{ fontSize: '1.5rem', marginBottom: '24px' }}>Generation Modes</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+              {MODES.map((mode) => (
+                <div key={mode.name} className="lg-card-holo" style={{ padding: '22px 24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <span className="t-headline" style={{ fontSize: '15px' }}>{mode.name}</span>
+                    <span className="lg-badge">{mode.cost}</span>
+                  </div>
+                  <p className="t-body" style={{ fontSize: '13px', color: 'var(--t-2)', marginBottom: '10px', lineHeight: '1.6' }}>{mode.desc}</p>
+                  <span className="t-label" style={{ fontSize: '11px', color: 'var(--t-3)' }}>Requires: {mode.plan}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Credit Costs */}
+        <section className="section-pad-sm" style={{ paddingTop: 0 }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px' }}>
+            <div className="lg-card" style={{ padding: '28px 32px' }}>
+              <h2 className="t-headline" style={{ fontSize: '1.4rem', marginBottom: '20px' }}>Credit Cost Reference</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                {CREDIT_COSTS.map((item, i) => (
+                  <div
+                    key={item.action}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px 0',
+                      borderBottom: i < CREDIT_COSTS.length - 1 ? '1px solid var(--glass-border)' : 'none',
+                    }}
+                  >
+                    <span className="t-body" style={{ fontSize: '14px', color: 'var(--t-2)' }}>{item.action}</span>
+                    <span
+                      style={{
+                        fontFamily: '"JetBrains Mono", monospace',
+                        fontSize: '13px',
+                        color: 'var(--gold-400)',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {item.credits} cr
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FREE CREDITS Section */}
+        <section className="section-pad-sm" style={{ paddingTop: 0, paddingBottom: '80px' }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 24px' }}>
+            <div
+              className="lg-card"
+              style={{
+                padding: '40px',
+                border: '1px solid var(--glass-border-gold)',
+              }}
+            >
+              {/* Section header */}
+              <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                <span className="lg-badge" style={{ marginBottom: '16px' }}>Free Credits</span>
+                <h2 className="t-headline" style={{ fontSize: '1.6rem', marginBottom: '10px' }}>
+                  FREE CREDITS — How to Get Free Credits
+                </h2>
+                <p className="t-body" style={{ fontSize: '15px', color: 'var(--t-2)', maxWidth: '520px', margin: '0 auto' }}>
+                  Earn 10 free credits for every social platform you follow. Maximum 50 credits total.
+                </p>
+              </div>
+
+              {/* Platforms */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                  gap: '12px',
+                  marginBottom: '28px',
+                }}
+              >
+                {[
+                  { name: 'TikTok', handle: '@xeron.labs', color: '#EE1D52' },
+                  { name: 'YouTube', handle: '@xeron-labs', color: '#FF0000' },
+                  { name: 'Discord', handle: 'XERON Server', color: '#5865F2' },
+                  { name: 'Instagram', handle: '@xeron.labs', color: '#E1306C' },
+                  { name: 'X', handle: '@xer0nlabs', color: '#ffffff' },
+                ].map((p) => (
+                  <div
+                    key={p.name}
+                    style={{
+                      background: 'rgba(212,160,23,0.04)',
+                      border: '1px solid rgba(212,160,23,0.15)',
+                      borderRadius: '14px',
+                      padding: '14px 16px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <p style={{ fontSize: '14px', fontWeight: 700, color: p.color, marginBottom: '4px' }}>{p.name}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--t-3)', fontFamily: 'JetBrains Mono, monospace' }}>{p.handle}</p>
+                    <p style={{ fontSize: '12px', color: 'var(--gold-400)', fontWeight: 700, marginTop: '6px' }}>+10 Credits</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Max note */}
+              <div
+                style={{
+                  background: 'rgba(212,160,23,0.06)',
+                  border: '1px solid rgba(212,160,23,0.20)',
+                  borderRadius: '14px',
+                  padding: '14px 20px',
+                  marginBottom: '28px',
+                  textAlign: 'center',
+                }}
+              >
+                <p className="t-body" style={{ fontSize: '14px', color: 'var(--t-1)', margin: 0 }}>
+                  <strong>Maximum: 50 Credits</strong> (5 platforms × 10 Credits) — Each platform can only be redeemed once.
+                </p>
+              </div>
+
+              {/* Steps */}
+              <div style={{ marginBottom: '28px' }}>
+                <p className="t-label" style={{ marginBottom: '14px', color: 'var(--t-3)' }}>How to claim</p>
+                <ol style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {[
+                    'Follow us on one or more platforms above',
+                    'Join our Discord: discord.gg/u5HF4CQPug',
+                    'Create a ticket in the #credits-beantragen channel',
+                    'Select which platforms you followed',
+                    'Write your username for each platform',
+                    'Wait up to 24 hours — our team reviews manually',
+                  ].map((s, i) => (
+                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                      <span
+                        style={{
+                          minWidth: '22px', height: '22px', borderRadius: '50%',
+                          background: 'rgba(212,160,23,0.12)', border: '1px solid rgba(212,160,23,0.28)',
+                          color: 'var(--gold-400)', fontSize: '11px', fontWeight: 700,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                        }}
+                      >
+                        {i + 1}
+                      </span>
+                      <span className="t-body" style={{ fontSize: '14px', color: 'var(--t-2)', lineHeight: '1.6' }}>{s}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* CTA */}
+              <div style={{ textAlign: 'center' }}>
+                <a
+                  href="https://discord.gg/u5HF4CQPug"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-glass"
+                >
+                  Go to Discord
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   )
 }

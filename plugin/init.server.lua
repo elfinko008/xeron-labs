@@ -1,581 +1,624 @@
--- ============================================================
--- XERON Engine — Roblox Studio Plugin
--- Version: 1.0.0
--- Website: https://xeron-labs.com
--- ============================================================
+-- ═══════════════════════════════════════════════════════════════
+--  XERON Engine v7 — Roblox Studio Plugin
+--  Website: https://xeron-labs.com
+-- ═══════════════════════════════════════════════════════════════
 
 local BASE_URL = "https://xeron-labs.com"
-local PLUGIN_NAME = "XERON Engine"
-local SETTING_TOKEN = "xeron_session_token"
+local PLUGIN_VERSION = "7.0.0"
+local SETTING_TOKEN = "xeron_session_token_v7"
 
-local HttpService    = game:GetService("HttpService")
-local StudioService  = game:GetService("StudioService")
-local RunService     = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+local StudioService = game:GetService("StudioService")
+local Selection = game:GetService("Selection")
+local Workspace = game:GetService("Workspace")
 
--- Nur im Studio ausführen
-if not RunService:IsStudio() then return end
-
--- ============================================================
--- PLUGIN TOOLBAR & BUTTON
--- ============================================================
-local toolbar = plugin:CreateToolbar(PLUGIN_NAME)
+-- ── TOOLBAR & BUTTON ──────────────────────────────────────────
+local toolbar = plugin:CreateToolbar("XERON Engine v7")
 local toggleButton = toolbar:CreateButton(
-    "XERON Engine",
-    "KI-generierte Roblox-Spiele laden",
-    "rbxassetid://0" -- Platzhalter Icon
+	"XERON Engine",
+	"Open XERON Engine — AI Roblox Game Builder",
+	"rbxassetid://0"
 )
 
--- ============================================================
--- DOCK WIDGET
--- ============================================================
+-- ── DOCK WIDGET ───────────────────────────────────────────────
 local widgetInfo = DockWidgetPluginGuiInfo.new(
-    Enum.InitialDockState.Right,
-    false, -- initial enabled
-    false, -- override enabled
-    300,   -- default width
-    500,   -- default height
-    280,   -- min width
-    400    -- min height
+	Enum.InitialDockState.Right,
+	false,  -- initially disabled
+	false,  -- not overriding previous enabled state
+	320, 560,  -- initial size
+	280, 480   -- min size
 )
 
-local widget = plugin:CreateDockWidgetPluginGui(PLUGIN_NAME, widgetInfo)
-widget.Title = PLUGIN_NAME
-widget.Name  = PLUGIN_NAME
+local widget = plugin:CreateDockWidgetPluginGui("XeronEngineV7", widgetInfo)
+widget.Title = "XERON Engine"
 
--- ============================================================
--- HELPER FUNKTIONEN
--- ============================================================
-local function getToken()
-    return plugin:GetSetting(SETTING_TOKEN) or ""
+-- ── STATE ─────────────────────────────────────────────────────
+local sessionToken = plugin:GetSetting(SETTING_TOKEN) or ""
+local currentScreen = sessionToken ~= "" and "home" or "login"
+local selectedMode = "script"
+
+-- ── COLORS ────────────────────────────────────────────────────
+local GOLD     = Color3.fromRGB(212, 160, 23)
+local GOLD_DIM = Color3.fromRGB(139, 95, 0)
+local BG_DEEP  = Color3.fromRGB(7, 7, 26)
+local BG_CARD  = Color3.fromRGB(18, 18, 46)
+local BG_INPUT = Color3.fromRGB(12, 12, 36)
+local TEXT_1   = Color3.fromRGB(240, 241, 252)
+local TEXT_2   = Color3.fromRGB(176, 180, 216)
+local TEXT_3   = Color3.fromRGB(110, 114, 153)
+local SUCCESS  = Color3.fromRGB(74, 222, 128)
+local ERROR_C  = Color3.fromRGB(248, 113, 113)
+local WHITE    = Color3.new(1, 1, 1)
+
+-- ── API HELPER ────────────────────────────────────────────────
+local function apiRequest(method, path, body)
+	local ok, result = pcall(function()
+		local options = {
+			Url = BASE_URL .. path,
+			Method = method,
+			Headers = {
+				["Content-Type"] = "application/json",
+				["X-Session-Token"] = sessionToken,
+				["X-Plugin-Version"] = PLUGIN_VERSION,
+			}
+		}
+		if body then
+			options.Body = HttpService:JSONEncode(body)
+		end
+		local response = HttpService:RequestAsync(options)
+		if response.Success then
+			return HttpService:JSONDecode(response.Body)
+		else
+			return { error = "HTTP " .. response.StatusCode }
+		end
+	end)
+	if ok then return result
+	else return { error = tostring(result) } end
 end
 
-local function saveToken(token)
-    plugin:SetSetting(SETTING_TOKEN, token)
+-- ── UI BUILDER ────────────────────────────────────────────────
+local function clearWidget()
+	for _, child in ipairs(widget:GetChildren()) do
+		if child:IsA("GuiObject") then child:Destroy() end
+	end
 end
 
-local function clearToken()
-    plugin:SetSetting(SETTING_TOKEN, "")
+local function makeLabel(parent, text, size, weight, color, pos, labelSize)
+	local lbl = Instance.new("TextLabel")
+	lbl.Parent = parent
+	lbl.Text = text
+	lbl.TextSize = size or 14
+	lbl.Font = weight == "bold" and Enum.Font.GothamBold or Enum.Font.Gotham
+	lbl.TextColor3 = color or TEXT_1
+	lbl.BackgroundTransparency = 1
+	lbl.Position = pos or UDim2.new(0, 0, 0, 0)
+	lbl.Size = labelSize or UDim2.new(1, 0, 0, 20)
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.TextWrapped = true
+	return lbl
 end
 
-local function apiRequest(method, endpoint, body)
-    local token = getToken()
-    local headers = {
-        ["Content-Type"]  = "application/json",
-        ["X-Session-Token"] = token,
-    }
+local function makeInput(parent, placeholder, pos, size, isPassword)
+	local frame = Instance.new("Frame")
+	frame.Parent = parent
+	frame.Position = pos
+	frame.Size = size or UDim2.new(1, -32, 0, 40)
+	frame.BackgroundColor3 = BG_INPUT
+	frame.BorderSizePixel = 0
+	Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+	Instance.new("UIStroke", frame).Color = Color3.fromRGB(58, 61, 92)
 
-    local success, result = pcall(function()
-        return HttpService:RequestAsync({
-            Url     = BASE_URL .. endpoint,
-            Method  = method,
-            Headers = headers,
-            Body    = body and HttpService:JSONEncode(body) or nil,
-        })
-    end)
-
-    if not success then
-        return nil, "Netzwerkfehler: " .. tostring(result)
-    end
-
-    if result.StatusCode == 401 then
-        clearToken()
-        return nil, "Nicht authentifiziert"
-    end
-
-    local ok, data = pcall(HttpService.JSONDecode, HttpService, result.Body)
-    if not ok then
-        return nil, "Ungültige Serverantwort"
-    end
-
-    return data, nil
+	local box = Instance.new("TextBox")
+	box.Parent = frame
+	box.Size = UDim2.new(1, -20, 1, 0)
+	box.Position = UDim2.new(0, 10, 0, 0)
+	box.BackgroundTransparency = 1
+	box.TextColor3 = TEXT_1
+	box.PlaceholderColor3 = TEXT_3
+	box.PlaceholderText = placeholder
+	box.Font = Enum.Font.Gotham
+	box.TextSize = 13
+	box.Text = ""
+	box.TextXAlignment = Enum.TextXAlignment.Left
+	if isPassword then box.TextTransparency = 0 end
+	return box, frame
 end
 
--- ============================================================
--- UI FARBEN & STILHELFER
--- ============================================================
-local COLORS = {
-    bg        = Color3.fromRGB(10,  10,  20),
-    surface   = Color3.fromRGB(18,  18,  31),
-    card      = Color3.fromRGB(26,  26,  46),
-    red       = Color3.fromRGB(233, 69,  96),
-    cyan      = Color3.fromRGB(0,   212, 255),
-    white     = Color3.fromRGB(255, 255, 255),
-    secondary = Color3.fromRGB(160, 160, 184),
-    muted     = Color3.fromRGB(96,  96,  120),
-    border    = Color3.fromRGB(42,  42,  62),
-    green     = Color3.fromRGB(0,   255, 128),
-}
-
-local function makeFrame(parent, size, pos, bg, radius)
-    local f = Instance.new("Frame")
-    f.Size            = size or UDim2.new(1,0,0,40)
-    f.Position        = pos  or UDim2.new(0,0,0,0)
-    f.BackgroundColor3 = bg or COLORS.surface
-    f.BorderSizePixel = 0
-    f.Parent          = parent
-    if radius then
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, radius)
-        corner.Parent = f
-    end
-    return f
+local function makeButton(parent, text, pos, size, isPrimary)
+	local btn = Instance.new("TextButton")
+	btn.Parent = parent
+	btn.Position = pos
+	btn.Size = size or UDim2.new(1, -32, 0, 40)
+	btn.BackgroundColor3 = isPrimary and GOLD or BG_CARD
+	btn.BorderSizePixel = 0
+	btn.Text = text
+	btn.TextColor3 = isPrimary and Color3.fromRGB(10, 9, 0) or TEXT_1
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 13
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+	if not isPrimary then
+		local stroke = Instance.new("UIStroke", btn)
+		stroke.Color = Color3.fromRGB(58, 61, 92)
+	end
+	return btn
 end
 
-local function makeLabel(parent, text, size, color, pos)
-    local l = Instance.new("TextLabel")
-    l.Text              = text
-    l.TextSize          = size or 14
-    l.TextColor3        = color or COLORS.white
-    l.BackgroundTransparency = 1
-    l.Font              = Enum.Font.GothamBold
-    l.TextXAlignment    = Enum.TextXAlignment.Left
-    l.Size              = UDim2.new(1, -20, 0, size and size + 6 or 20)
-    l.Position          = pos or UDim2.new(0, 10, 0, 0)
-    l.Parent            = parent
-    return l
+-- ── SCREEN: LOGIN ─────────────────────────────────────────────
+local function showLoginScreen()
+	clearWidget()
+	currentScreen = "login"
+
+	local scroll = Instance.new("ScrollingFrame")
+	scroll.Parent = widget
+	scroll.Size = UDim2.new(1, 0, 1, 0)
+	scroll.BackgroundColor3 = BG_DEEP
+	scroll.BorderSizePixel = 0
+	scroll.ScrollBarThickness = 3
+	scroll.CanvasSize = UDim2.new(0, 0, 0, 480)
+	scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+	local padding = Instance.new("UIPadding", scroll)
+	padding.PaddingLeft = UDim.new(0, 16)
+	padding.PaddingRight = UDim.new(0, 16)
+	padding.PaddingTop = UDim.new(0, 24)
+
+	local layout = Instance.new("UIListLayout", scroll)
+	layout.Padding = UDim.new(0, 12)
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+	-- Logo
+	local logo = makeLabel(scroll, "✦ XERON", 22, "bold", GOLD, nil, UDim2.new(1, 0, 0, 30))
+	logo.LayoutOrder = 1
+	logo.TextXAlignment = Enum.TextXAlignment.Center
+
+	local tagline = makeLabel(scroll, "AI Roblox Game Engine", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 16))
+	tagline.LayoutOrder = 2
+	tagline.TextXAlignment = Enum.TextXAlignment.Center
+
+	local spacer = Instance.new("Frame", scroll)
+	spacer.LayoutOrder = 3
+	spacer.Size = UDim2.new(1, 0, 0, 8)
+	spacer.BackgroundTransparency = 1
+
+	local emailLabel = makeLabel(scroll, "Email", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	emailLabel.LayoutOrder = 4
+
+	local emailBox, emailFrame = makeInput(scroll, "your@email.com", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 40))
+	emailFrame.LayoutOrder = 5
+
+	local pwLabel = makeLabel(scroll, "Password", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	pwLabel.LayoutOrder = 6
+
+	local pwBox, pwFrame = makeInput(scroll, "••••••••", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 40), true)
+	pwFrame.LayoutOrder = 7
+
+	local statusLabel = makeLabel(scroll, "", 11, nil, ERROR_C, nil, UDim2.new(1, 0, 0, 14))
+	statusLabel.LayoutOrder = 8
+	statusLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+	local loginBtn = makeButton(scroll, "Sign In", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 44), true)
+	loginBtn.LayoutOrder = 9
+
+	local signupLabel = makeLabel(scroll, "Don't have an account? → xeron-labs.com/register", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 16))
+	signupLabel.LayoutOrder = 10
+	signupLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+	loginBtn.MouseButton1Click:Connect(function()
+		local email = emailBox.Text:match("^%s*(.-)%s*$")
+		local password = pwBox.Text
+		if email == "" or password == "" then
+			statusLabel.Text = "Please enter email and password"
+			return
+		end
+		loginBtn.Text = "Signing in..."
+		loginBtn.BackgroundColor3 = GOLD_DIM
+		statusLabel.Text = ""
+
+		local result = apiRequest("POST", "/api/plugin/auth", { email = email, password = password })
+		if result and result.token then
+			sessionToken = result.token
+			plugin:SetSetting(SETTING_TOKEN, sessionToken)
+			showHomeScreen()
+		else
+			loginBtn.Text = "Sign In"
+			loginBtn.BackgroundColor3 = GOLD
+			statusLabel.Text = result and result.error or "Login failed. Check credentials."
+		end
+	end)
 end
 
-local function makeInput(parent, placeholder, pos, height, isPassword)
-    local frame = makeFrame(parent, UDim2.new(1, -20, 0, height or 36), pos, COLORS.card, 8)
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = COLORS.border
-    stroke.Thickness = 1
-    stroke.Parent = frame
+-- ── SCREEN: HOME ──────────────────────────────────────────────
+local function showHomeScreen()
+	clearWidget()
+	currentScreen = "home"
 
-    local box = Instance.new("TextBox")
-    box.Size                  = UDim2.new(1, -16, 1, 0)
-    box.Position              = UDim2.new(0, 8, 0, 0)
-    box.BackgroundTransparency = 1
-    box.Text                  = ""
-    box.PlaceholderText       = placeholder
-    box.PlaceholderColor3     = COLORS.muted
-    box.TextColor3            = COLORS.white
-    box.Font                  = Enum.Font.Gotham
-    box.TextSize              = 13
-    box.ClearTextOnFocus      = false
-    box.TextXAlignment        = Enum.TextXAlignment.Left
-    if isPassword then
-        box.TextTransparency  = 0
-        -- Roblox Studio hat kein nativ Passwortfeld, Hinweis
-    end
-    box.Parent = frame
+	local scroll = Instance.new("ScrollingFrame")
+	scroll.Parent = widget
+	scroll.Size = UDim2.new(1, 0, 1, 0)
+	scroll.BackgroundColor3 = BG_DEEP
+	scroll.BorderSizePixel = 0
+	scroll.ScrollBarThickness = 3
+	scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
-    box.Focused:Connect(function()
-        stroke.Color = COLORS.red
-    end)
-    box.FocusLost:Connect(function()
-        stroke.Color = COLORS.border
-    end)
+	local padding = Instance.new("UIPadding", scroll)
+	padding.PaddingLeft = UDim.new(0, 16)
+	padding.PaddingRight = UDim.new(0, 16)
+	padding.PaddingTop = UDim.new(0, 16)
 
-    return frame, box
+	local layout = Instance.new("UIListLayout", scroll)
+	layout.Padding = UDim.new(0, 10)
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+	-- Header
+	local header = Instance.new("Frame", scroll)
+	header.LayoutOrder = 1
+	header.Size = UDim2.new(1, 0, 0, 36)
+	header.BackgroundTransparency = 1
+
+	local logoText = makeLabel(header, "✦ XERON", 16, "bold", GOLD, UDim2.new(0, 0, 0, 4), UDim2.new(0.6, 0, 1, 0))
+
+	local logoutBtn = makeButton(header, "Logout", UDim2.new(0.65, 0, 0.1, 0), UDim2.new(0.35, 0, 0.8, 0), false)
+	logoutBtn.TextSize = 11
+
+	logoutBtn.MouseButton1Click:Connect(function()
+		sessionToken = ""
+		plugin:SetSetting(SETTING_TOKEN, "")
+		showLoginScreen()
+	end)
+
+	-- Mode selector label
+	local modeLabel = makeLabel(scroll, "Select Mode", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	modeLabel.LayoutOrder = 2
+
+	-- Mode buttons grid
+	local modes = {
+		{ id = "game",    label = "✦ Game",   cost = "50cr" },
+		{ id = "script",  label = "⌨ Script",  cost = "10cr" },
+		{ id = "ui",      label = "⊞ UI",      cost = "10cr" },
+		{ id = "fix",     label = "⚙ Fix",     cost = "15cr" },
+		{ id = "clean",   label = "⊘ Clean",   cost = "10cr" },
+		{ id = "diagnose",label = "◈ Diagnose",cost = "5cr"  },
+	}
+
+	local modeButtons = {}
+	local modeFrame = Instance.new("Frame", scroll)
+	modeFrame.LayoutOrder = 3
+	modeFrame.Size = UDim2.new(1, 0, 0, 96)
+	modeFrame.BackgroundTransparency = 1
+
+	local modeGrid = Instance.new("UIGridLayout", modeFrame)
+	modeGrid.CellSize = UDim2.new(0.5, -5, 0, 44)
+	modeGrid.CellPadding = UDim2.new(0, 6, 0, 6)
+
+	for _, mode in ipairs(modes) do
+		local btn = Instance.new("TextButton", modeFrame)
+		btn.BackgroundColor3 = selectedMode == mode.id and BG_CARD or BG_INPUT
+		btn.BorderSizePixel = 0
+		btn.Text = mode.label .. "\n" .. mode.cost
+		btn.TextColor3 = selectedMode == mode.id and GOLD or TEXT_2
+		btn.Font = Enum.Font.Gotham
+		btn.TextSize = 11
+		Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+		if selectedMode == mode.id then
+			local stroke = Instance.new("UIStroke", btn)
+			stroke.Color = GOLD
+		end
+		modeButtons[mode.id] = btn
+
+		local modeId = mode.id
+		btn.MouseButton1Click:Connect(function()
+			selectedMode = modeId
+			showHomeScreen()
+		end)
+	end
+
+	-- Prompt label
+	local promptLabel = makeLabel(scroll, "Describe your " .. selectedMode, 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	promptLabel.LayoutOrder = 4
+
+	-- Prompt input
+	local promptFrame = Instance.new("Frame", scroll)
+	promptFrame.LayoutOrder = 5
+	promptFrame.Size = UDim2.new(1, 0, 0, 100)
+	promptFrame.BackgroundColor3 = BG_INPUT
+	promptFrame.BorderSizePixel = 0
+	Instance.new("UICorner", promptFrame).CornerRadius = UDim.new(0, 10)
+	Instance.new("UIStroke", promptFrame).Color = Color3.fromRGB(58, 61, 92)
+
+	local promptBox = Instance.new("TextBox", promptFrame)
+	promptBox.Size = UDim2.new(1, -16, 1, -16)
+	promptBox.Position = UDim2.new(0, 8, 0, 8)
+	promptBox.BackgroundTransparency = 1
+	promptBox.TextColor3 = TEXT_1
+	promptBox.PlaceholderColor3 = TEXT_3
+	promptBox.PlaceholderText = "Describe your Roblox " .. selectedMode .. "..."
+	promptBox.Font = Enum.Font.Gotham
+	promptBox.TextSize = 12
+	promptBox.Text = ""
+	promptBox.TextXAlignment = Enum.TextXAlignment.Left
+	promptBox.TextYAlignment = Enum.TextYAlignment.Top
+	promptBox.MultiLine = true
+	promptBox.TextWrapped = true
+
+	-- Status
+	local statusLbl = makeLabel(scroll, "", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	statusLbl.LayoutOrder = 6
+	statusLbl.TextXAlignment = Enum.TextXAlignment.Center
+
+	-- Generate button
+	local genBtn = makeButton(scroll, "✦ Generate", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 44), true)
+	genBtn.LayoutOrder = 7
+
+	-- Recent projects
+	local projLabel = makeLabel(scroll, "Recent Projects", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	projLabel.LayoutOrder = 8
+
+	-- Load projects
+	local projectsResult = apiRequest("GET", "/api/plugin/projects", nil)
+	if projectsResult and projectsResult.projects then
+		for i, proj in ipairs(projectsResult.projects) do
+			if i > 5 then break end
+			local pFrame = Instance.new("Frame", scroll)
+			pFrame.LayoutOrder = 8 + i
+			pFrame.Size = UDim2.new(1, 0, 0, 52)
+			pFrame.BackgroundColor3 = BG_CARD
+			pFrame.BorderSizePixel = 0
+			Instance.new("UICorner", pFrame).CornerRadius = UDim.new(0, 8)
+
+			local pName = makeLabel(pFrame, proj.name or "Untitled", 12, "bold", TEXT_1, UDim2.new(0, 10, 0, 6), UDim2.new(0.7, 0, 0, 18))
+			local pMode = makeLabel(pFrame, proj.mode or "script", 10, nil, TEXT_3, UDim2.new(0, 10, 0, 26), UDim2.new(0.5, 0, 0, 14))
+
+			local statusColor = proj.status == "done" and SUCCESS or (proj.status == "error" and ERROR_C or GOLD)
+			local pStatus = makeLabel(pFrame, proj.status or "done", 10, nil, statusColor, UDim2.new(0.6, 0, 0.2, 0), UDim2.new(0.38, -4, 0.6, 0))
+			pStatus.TextXAlignment = Enum.TextXAlignment.Right
+
+			local importBtn = makeButton(pFrame, "Import", UDim2.new(0.72, 0, 0.15, 0), UDim2.new(0.26, 0, 0.7, 0), true)
+			importBtn.TextSize = 10
+
+			local projId = proj.id
+			importBtn.MouseButton1Click:Connect(function()
+				importBtn.Text = "..."
+				local syncResult = apiRequest("GET", "/api/plugin/sync?id=" .. projId, nil)
+				if syncResult and syncResult.lua_output then
+					showResultScreen(syncResult.lua_output, proj.name or "Project", proj.mode or "script")
+				else
+					importBtn.Text = "Error"
+					wait(2)
+					importBtn.Text = "Import"
+				end
+			end)
+		end
+	end
+
+	genBtn.MouseButton1Click:Connect(function()
+		local prompt = promptBox.Text:match("^%s*(.-)%s*$")
+		if prompt == "" then
+			statusLbl.Text = "Please enter a description"
+			statusLbl.TextColor3 = ERROR_C
+			return
+		end
+		showProgressScreen(prompt, selectedMode)
+	end)
 end
 
-local function makeButton(parent, text, pos, size, primary)
-    local btn = Instance.new("TextButton")
-    btn.Text              = text
-    btn.Size              = size or UDim2.new(1, -20, 0, 36)
-    btn.Position          = pos  or UDim2.new(0, 10, 0, 0)
-    btn.BackgroundColor3  = primary and COLORS.red or COLORS.surface
-    btn.TextColor3        = COLORS.white
-    btn.Font              = Enum.Font.GothamBold
-    btn.TextSize          = 13
-    btn.BorderSizePixel   = 0
-    btn.AutoButtonColor   = false
-    btn.Parent            = parent
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = btn
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = primary and Color3.fromRGB(255,100,130) or COLORS.border
-    stroke.Thickness = 1
-    stroke.Parent = btn
+-- ── SCREEN: PROGRESS ──────────────────────────────────────────
+function showProgressScreen(prompt, mode)
+	clearWidget()
+	currentScreen = "progress"
 
-    btn.MouseEnter:Connect(function()
-        btn.BackgroundColor3 = primary and Color3.fromRGB(240,80,112) or COLORS.card
-    end)
-    btn.MouseLeave:Connect(function()
-        btn.BackgroundColor3 = primary and COLORS.red or COLORS.surface
-    end)
+	local frame = Instance.new("Frame", widget)
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.BackgroundColor3 = BG_DEEP
+	frame.BorderSizePixel = 0
 
-    return btn
+	local padding = Instance.new("UIPadding", frame)
+	padding.PaddingAll = UDim.new(0, 16)
+
+	local layout = Instance.new("UIListLayout", frame)
+	layout.Padding = UDim.new(0, 12)
+
+	local header = makeLabel(frame, "✦ XERON is Building...", 15, "bold", GOLD, nil, UDim2.new(1, 0, 0, 22))
+	header.LayoutOrder = 1
+	header.TextXAlignment = Enum.TextXAlignment.Center
+
+	local modeLabel = makeLabel(frame, "Mode: " .. mode:upper(), 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	modeLabel.LayoutOrder = 2
+	modeLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+	local progressBg = Instance.new("Frame", frame)
+	progressBg.LayoutOrder = 3
+	progressBg.Size = UDim2.new(1, 0, 0, 4)
+	progressBg.BackgroundColor3 = Color3.fromRGB(26, 26, 62)
+	progressBg.BorderSizePixel = 0
+	Instance.new("UICorner", progressBg).CornerRadius = UDim.new(1, 0)
+
+	local progressFill = Instance.new("Frame", progressBg)
+	progressFill.Size = UDim2.new(0, 0, 1, 0)
+	progressFill.BackgroundColor3 = GOLD
+	progressFill.BorderSizePixel = 0
+	Instance.new("UICorner", progressFill).CornerRadius = UDim.new(1, 0)
+
+	local logFrame = Instance.new("ScrollingFrame", frame)
+	logFrame.LayoutOrder = 4
+	logFrame.Size = UDim2.new(1, 0, 0, 320)
+	logFrame.BackgroundColor3 = BG_INPUT
+	logFrame.BorderSizePixel = 0
+	logFrame.ScrollBarThickness = 3
+	logFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	Instance.new("UICorner", logFrame).CornerRadius = UDim.new(0, 10)
+	local logPad = Instance.new("UIPadding", logFrame)
+	logPad.PaddingAll = UDim.new(0, 10)
+	local logLayout = Instance.new("UIListLayout", logFrame)
+	logLayout.Padding = UDim.new(0, 4)
+
+	local function addLog(text, isSuccess)
+		local lbl = makeLabel(logFrame, (isSuccess and "✓ " or ">> ") .. text, 11, nil, isSuccess and SUCCESS or TEXT_2, nil, UDim2.new(1, 0, 0, 16))
+		lbl.LayoutOrder = #logFrame:GetChildren()
+		logFrame.CanvasPosition = Vector2.new(0, logFrame.AbsoluteCanvasSize.Y)
+	end
+
+	-- Submit to API
+	local result = apiRequest("POST", "/api/generate", {
+		prompt = prompt,
+		mode = mode,
+		quality = "standard"
+	})
+
+	if result and result.project_id then
+		local projectId = result.project_id
+		addLog("Project created. Generating...", false)
+
+		-- Poll for completion
+		local attempts = 0
+		local maxAttempts = 90  -- 3 minutes at 2s intervals
+
+		while attempts < maxAttempts do
+			wait(2)
+			attempts = attempts + 1
+			progressFill.Size = UDim2.new(math.min(0.9, attempts / maxAttempts), 0, 1, 0)
+
+			local status = apiRequest("GET", "/api/generate/status?id=" .. projectId, nil)
+			if status and status.status == "done" then
+				progressFill.Size = UDim2.new(1, 0, 1, 0)
+				addLog("Generation complete!", true)
+				wait(0.5)
+				showResultScreen(status.lua_output, status.name or "Project", mode)
+				return
+			elseif status and status.status == "error" then
+				addLog("Generation failed: " .. (status.error or "Unknown error"), false)
+				wait(2)
+				showHomeScreen()
+				return
+			elseif status and status.tasks then
+				for _, task in ipairs(status.tasks) do
+					if task.completed then addLog(task.label, true) end
+				end
+			end
+		end
+		addLog("Timeout — please check My Projects in dashboard", false)
+		wait(3)
+		showHomeScreen()
+	else
+		addLog("Error: " .. (result and result.error or "Failed to start generation"), false)
+		wait(3)
+		showHomeScreen()
+	end
 end
 
--- ============================================================
--- HAUPT-CONTAINER
--- ============================================================
-local mainFrame = makeFrame(widget, UDim2.new(1,0,1,0), UDim2.new(0,0,0,0), COLORS.bg)
+-- ── SCREEN: RESULT ────────────────────────────────────────────
+function showResultScreen(luaCode, projectName, mode)
+	clearWidget()
+	currentScreen = "result"
 
--- SCREEN MANAGER
-local screens = {}
-local currentScreen = nil
+	local frame = Instance.new("Frame", widget)
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.BackgroundColor3 = BG_DEEP
+	frame.BorderSizePixel = 0
 
-local function showScreen(name)
-    for n, s in pairs(screens) do
-        s.Visible = (n == name)
-    end
-    currentScreen = name
+	local padding = Instance.new("UIPadding", frame)
+	padding.PaddingAll = UDim.new(0, 16)
+
+	local layout = Instance.new("UIListLayout", frame)
+	layout.Padding = UDim.new(0, 10)
+
+	local header = makeLabel(frame, "✓ " .. projectName, 14, "bold", SUCCESS, nil, UDim2.new(1, 0, 0, 20))
+	header.LayoutOrder = 1
+	header.TextXAlignment = Enum.TextXAlignment.Center
+
+	local modeLabel = makeLabel(frame, mode:upper() .. " — Ready to Import", 11, nil, TEXT_3, nil, UDim2.new(1, 0, 0, 14))
+	modeLabel.LayoutOrder = 2
+	modeLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+	local importBtn = makeButton(frame, "✦ Import to Workspace", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 44), true)
+	importBtn.LayoutOrder = 3
+
+	local copyBtn = makeButton(frame, "Copy to Clipboard", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 36), false)
+	copyBtn.LayoutOrder = 4
+
+	local backBtn = makeButton(frame, "← Back to Home", UDim2.new(0, 0, 0, 0), UDim2.new(1, 0, 0, 36), false)
+	backBtn.LayoutOrder = 5
+
+	local preview = Instance.new("ScrollingFrame", frame)
+	preview.LayoutOrder = 6
+	preview.Size = UDim2.new(1, 0, 0, 200)
+	preview.BackgroundColor3 = BG_INPUT
+	preview.BorderSizePixel = 0
+	preview.ScrollBarThickness = 3
+	Instance.new("UICorner", preview).CornerRadius = UDim.new(0, 8)
+	local previewPad = Instance.new("UIPadding", preview)
+	previewPad.PaddingAll = UDim.new(0, 10)
+
+	local codeLabel = Instance.new("TextLabel", preview)
+	codeLabel.Size = UDim2.new(1, 0, 0, 0)
+	codeLabel.AutomaticSize = Enum.AutomaticSize.Y
+	codeLabel.BackgroundTransparency = 1
+	codeLabel.TextColor3 = TEXT_2
+	codeLabel.Font = Enum.Font.Code
+	codeLabel.TextSize = 10
+	codeLabel.Text = luaCode and string.sub(luaCode, 1, 1000) .. (string.len(luaCode) > 1000 and "\n..." or "") or ""
+	codeLabel.TextXAlignment = Enum.TextXAlignment.Left
+	codeLabel.TextWrapped = true
+
+	-- Import: create a ModuleScript or LocalScript in workspace
+	importBtn.MouseButton1Click:Connect(function()
+		importBtn.Text = "Importing..."
+		local ok, err = pcall(function()
+			local scriptObj
+			if mode == "game" or mode == "script" or mode == "fix" or mode == "clean" then
+				scriptObj = Instance.new("Script")
+			elseif mode == "ui" then
+				scriptObj = Instance.new("LocalScript")
+			else
+				scriptObj = Instance.new("ModuleScript")
+			end
+			scriptObj.Name = projectName
+			scriptObj.Source = luaCode or "-- XERON: No output generated"
+			scriptObj.Parent = Workspace
+			Selection:Set({scriptObj})
+		end)
+		if ok then
+			importBtn.Text = "✓ Imported!"
+			importBtn.BackgroundColor3 = SUCCESS
+			importBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+		else
+			importBtn.Text = "Error: " .. tostring(err)
+			wait(3)
+			importBtn.Text = "✦ Import to Workspace"
+			importBtn.BackgroundColor3 = GOLD
+			importBtn.TextColor3 = Color3.fromRGB(10, 9, 0)
+		end
+	end)
+
+	copyBtn.MouseButton1Click:Connect(function()
+		-- Clipboard not available in Roblox Studio plugin context
+		-- Show instruction instead
+		copyBtn.Text = "Paste in Script Editor"
+		wait(2)
+		copyBtn.Text = "Copy to Clipboard"
+	end)
+
+	backBtn.MouseButton1Click:Connect(function()
+		showHomeScreen()
+	end)
 end
 
--- ============================================================
--- SCREEN 1: LOGIN
--- ============================================================
-local loginScreen = makeFrame(mainFrame, UDim2.new(1,0,1,0), UDim2.new(0,0,0,0), COLORS.bg)
-loginScreen.Visible = true
-screens["login"] = loginScreen
-
--- Logo
-local logoLabel = makeLabel(loginScreen, "XERON Engine", 20, COLORS.red, UDim2.new(0,10,0,20))
-logoLabel.Font = Enum.Font.GothamBlack
-logoLabel.Size = UDim2.new(1,-20,0,28)
-local subLabel = makeLabel(loginScreen, "KI-Roblox-Spielgenerierung", 11, COLORS.muted, UDim2.new(0,10,0,52))
-
--- Divider
-local div1 = makeFrame(loginScreen, UDim2.new(1,-20,0,1), UDim2.new(0,10,0,78), COLORS.border)
-
--- Email
-makeLabel(loginScreen, "E-Mail", 12, COLORS.secondary, UDim2.new(0,10,0,92))
-local _, emailBox = makeInput(loginScreen, "deine@email.com", UDim2.new(0,10,0,112))
-
--- Passwort
-makeLabel(loginScreen, "Passwort", 12, COLORS.secondary, UDim2.new(0,10,0,158))
-local _, pwBox = makeInput(loginScreen, "Passwort", UDim2.new(0,10,0,178), 36, true)
-
--- Fehler-Label
-local loginError = makeLabel(loginScreen, "", 11, COLORS.red, UDim2.new(0,10,0,224))
-loginError.Size = UDim2.new(1,-20,0,28)
-loginError.TextWrapped = true
-
--- Login Button
-local loginBtn = makeButton(loginScreen, "Anmelden", UDim2.new(0,10,0,258), nil, true)
-
--- Registrieren Hinweis
-local regLabel = makeLabel(loginScreen, "Kein Account? xeron-labs.com/register", 11, COLORS.muted, UDim2.new(0,10,0,304))
-regLabel.Size = UDim2.new(1,-20,0,16)
-
-loginBtn.MouseButton1Click:Connect(function()
-    local email    = emailBox.Text
-    local password = pwBox.Text
-
-    if email == "" or password == "" then
-        loginError.Text = "Bitte E-Mail und Passwort eingeben."
-        return
-    end
-
-    loginBtn.Text = "Anmelden..."
-    loginError.Text = ""
-
-    local data, err = apiRequest("POST", "/api/plugin/auth", {
-        email    = email,
-        password = password,
-    })
-
-    if err or not data then
-        loginError.Text = err or "Anmeldung fehlgeschlagen."
-        loginBtn.Text = "Anmelden"
-        return
-    end
-
-    if data.session_token then
-        saveToken(data.session_token)
-        loginBtn.Text = "Anmelden"
-        showScreen("projects")
-        -- Projekte laden
-        task.spawn(function() loadProjects() end)
-    else
-        loginError.Text = data.error or "Ungültige Antwort vom Server."
-        loginBtn.Text = "Anmelden"
-    end
-end)
-
--- ============================================================
--- SCREEN 2: PROJEKTE
--- ============================================================
-local projectsScreen = makeFrame(mainFrame, UDim2.new(1,0,1,0), UDim2.new(0,0,0,0), COLORS.bg)
-projectsScreen.Visible = false
-screens["projects"] = projectsScreen
-
--- Header
-local projHeader = makeFrame(projectsScreen, UDim2.new(1,0,0,56), UDim2.new(0,0,0,0), COLORS.surface)
-local projTitle = makeLabel(projHeader, "Projekte", 16, COLORS.white, UDim2.new(0,12,0,10))
-projTitle.Font = Enum.Font.GothamBlack
-
-local creditsBadge = makeLabel(projHeader, "■ Credits: --", 11, COLORS.cyan, UDim2.new(0,12,0,34))
-creditsBadge.Size = UDim2.new(0.7,0,0,16)
-
-local logoutBtn = makeButton(projHeader, "Logout", UDim2.new(1,-72,0,10), UDim2.new(0,62,0,36), false)
-logoutBtn.TextSize = 11
-
--- Scroll-Container für Projekte
-local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size              = UDim2.new(1,0,1,-136)
-scrollFrame.Position          = UDim2.new(0,0,0,56)
-scrollFrame.BackgroundTransparency = 1
-scrollFrame.BorderSizePixel   = 0
-scrollFrame.ScrollBarThickness = 4
-scrollFrame.ScrollBarImageColor3 = COLORS.red
-scrollFrame.CanvasSize        = UDim2.new(0,0,0,0)
-scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-scrollFrame.Parent            = projectsScreen
-
-local listLayout = Instance.new("UIListLayout")
-listLayout.Padding         = UDim.new(0, 6)
-listLayout.SortOrder       = Enum.SortOrder.LayoutOrder
-listLayout.Parent          = scrollFrame
-
-local listPad = Instance.new("UIPadding")
-listPad.PaddingLeft   = UDim.new(0, 10)
-listPad.PaddingRight  = UDim.new(0, 10)
-listPad.PaddingTop    = UDim.new(0, 8)
-listPad.Parent        = scrollFrame
-
--- "Neues Spiel" Button unten
-local newGameBtn = makeButton(
-    projectsScreen,
-    "+ Neues Spiel auf xeron-labs.com",
-    UDim2.new(0,10,1,-48),
-    UDim2.new(1,-20,0,36),
-    true
-)
-
-newGameBtn.MouseButton1Click:Connect(function()
-    -- Öffnet Browser (im Studio nicht direkt möglich)
-    warn("[XERON] Öffne: https://xeron-labs.com/dashboard")
-end)
-
-logoutBtn.MouseButton1Click:Connect(function()
-    clearToken()
-    showScreen("login")
-end)
-
-local loadingLabel = makeLabel(projectsScreen, "Projekte werden geladen...", 12, COLORS.muted, UDim2.new(0,10,0,70))
-
-local function clearProjectList()
-    for _, child in ipairs(scrollFrame:GetChildren()) do
-        if child:IsA("Frame") then
-            child:Destroy()
-        end
-    end
-end
-
-function loadProjects()
-    clearProjectList()
-    loadingLabel.Visible = true
-
-    local data, err = apiRequest("GET", "/api/plugin/projects", nil)
-
-    loadingLabel.Visible = false
-
-    if err or not data then
-        loadingLabel.Text = "Fehler beim Laden: " .. (err or "Unbekannt")
-        loadingLabel.Visible = true
-        return
-    end
-
-    -- Credits anzeigen
-    if data.credits then
-        creditsBadge.Text = "■ Credits: " .. tostring(data.credits)
-    end
-
-    local projects = data.projects or {}
-
-    if #projects == 0 then
-        loadingLabel.Text = "Noch keine Projekte. Erstelle dein erstes Spiel!"
-        loadingLabel.Visible = true
-        return
-    end
-
-    for i, proj in ipairs(projects) do
-        local card = makeFrame(scrollFrame, UDim2.new(1,0,0,80), nil, COLORS.surface, 10)
-        card.LayoutOrder = i
-
-        local stroke = Instance.new("UIStroke")
-        stroke.Color = COLORS.border
-        stroke.Thickness = 1
-        stroke.Parent = card
-
-        local nameLabel = makeLabel(card, proj.name or "Unbekannt", 13, COLORS.white, UDim2.new(0,10,0,10))
-        nameLabel.Size = UDim2.new(1,-80,0,18)
-
-        local statusColor = proj.status == "done" and COLORS.green or
-                            proj.status == "error" and COLORS.red or COLORS.cyan
-        local statusLabel = makeLabel(card, proj.status or "?", 10, statusColor, UDim2.new(1,-70,0,12))
-        statusLabel.Size = UDim2.new(0,60,0,16)
-        statusLabel.TextXAlignment = Enum.TextXAlignment.Right
-
-        local gameTypeLabel = makeLabel(card, (proj.game_type or "custom") .. " · " .. (proj.quality or "standard"), 11, COLORS.muted, UDim2.new(0,10,0,32))
-
-        if proj.status == "done" then
-            local loadBtn = makeButton(card, "In Studio laden", UDim2.new(0,10,1,-40), UDim2.new(1,-20,0,28), true)
-            loadBtn.TextSize = 12
-
-            local projId = proj.id
-            loadBtn.MouseButton1Click:Connect(function()
-                loadBtn.Text = "Wird geladen..."
-                task.spawn(function()
-                    loadProjectToStudio(projId, loadBtn)
-                end)
-            end)
-        end
-    end
-end
-
--- ============================================================
--- SCREEN 3: FORTSCHRITT (Lua-Ausführung)
--- ============================================================
-local progressScreen = makeFrame(mainFrame, UDim2.new(1,0,1,0), UDim2.new(0,0,0,0), COLORS.bg)
-progressScreen.Visible = false
-screens["progress"] = progressScreen
-
-local progHeader = makeFrame(progressScreen, UDim2.new(1,0,0,56), UDim2.new(0,0,0,0), COLORS.surface)
-local progTitle = makeLabel(progHeader, "Spiel wird geladen...", 14, COLORS.white, UDim2.new(0,12,0,18))
-progTitle.Font = Enum.Font.GothamBlack
-
-local progStatus = makeLabel(progressScreen, "", 12, COLORS.cyan, UDim2.new(0,10,0,68))
-progStatus.Size = UDim2.new(1,-20,0,20)
-
-local progLog = Instance.new("ScrollingFrame")
-progLog.Size              = UDim2.new(1,-20,1,-160)
-progLog.Position          = UDim2.new(0,10,0,96)
-progLog.BackgroundColor3  = COLORS.surface
-progLog.BorderSizePixel   = 0
-progLog.ScrollBarThickness = 3
-progLog.ScrollBarImageColor3 = COLORS.cyan
-progLog.AutomaticCanvasSize = Enum.AutomaticSize.Y
-progLog.CanvasSize        = UDim2.new(0,0,0,0)
-progLog.Parent            = progressScreen
-
-local logLayout = Instance.new("UIListLayout")
-logLayout.Padding = UDim.new(0,2)
-logLayout.Parent = progLog
-local logPad = Instance.new("UIPadding")
-logPad.PaddingLeft = UDim.new(0,6)
-logPad.PaddingTop  = UDim.new(0,4)
-logPad.Parent = progLog
-
-local corner3 = Instance.new("UICorner")
-corner3.CornerRadius = UDim.new(0,8)
-corner3.Parent = progLog
-
-local abortBtn = makeButton(progressScreen, "Abbrechen", UDim2.new(0,10,1,-48), nil, false)
-local backBtn  = makeButton(progressScreen, "Zurück zu Projekten", UDim2.new(0,10,1,-48), nil, false)
-backBtn.Visible = false
-
-abortBtn.MouseButton1Click:Connect(function()
-    showScreen("projects")
-end)
-backBtn.MouseButton1Click:Connect(function()
-    backBtn.Visible = false
-    abortBtn.Visible = true
-    showScreen("projects")
-end)
-
-local function addLogLine(text, color)
-    local l = Instance.new("TextLabel")
-    l.Text = "> " .. text
-    l.TextColor3 = color or COLORS.secondary
-    l.BackgroundTransparency = 1
-    l.Font = Enum.Font.Code
-    l.TextSize = 11
-    l.TextXAlignment = Enum.TextXAlignment.Left
-    l.Size = UDim2.new(1,-4,0,16)
-    l.TextWrapped = true
-    l.AutomaticSize = Enum.AutomaticSize.Y
-    l.Parent = progLog
-end
-
-function loadProjectToStudio(projectId, loadBtn)
-    showScreen("progress")
-    progTitle.Text = "Projekt wird geladen..."
-    progStatus.Text = "Daten werden abgerufen..."
-    abortBtn.Visible = true
-    backBtn.Visible = false
-
-    -- Log leeren
-    for _, c in ipairs(progLog:GetChildren()) do
-        if c:IsA("TextLabel") then c:Destroy() end
-    end
-
-    addLogLine("Verbindung zu XERON Engine...", COLORS.cyan)
-
-    local data, err = apiRequest("GET", "/api/plugin/sync?projectId=" .. projectId, nil)
-
-    if err or not data then
-        addLogLine("Fehler: " .. (err or "Unbekannt"), COLORS.red)
-        progStatus.Text = "Fehler beim Laden"
-        abortBtn.Visible = false
-        backBtn.Visible = true
-        if loadBtn then loadBtn.Text = "In Studio laden" end
-        return
-    end
-
-    local tasks = data.tasks or {}
-    progTitle.Text = data.projectName or "Projekt"
-    addLogLine("Projekt: " .. (data.projectName or "?"), COLORS.white)
-    addLogLine(#tasks .. " Tasks werden ausgeführt...", COLORS.cyan)
-
-    local errors = 0
-    for i, t in ipairs(tasks) do
-        progStatus.Text = string.format("Task %d/%d: %s", i, #tasks, t.name or "?")
-        addLogLine(string.format("[%d/%d] %s", i, #tasks, t.name or "?"))
-
-        if t.lua and t.lua ~= "" then
-            local ok, execErr = pcall(function()
-                local fn, loadErr = loadstring(t.lua)
-                if fn then
-                    fn()
-                else
-                    error("Syntaxfehler: " .. tostring(loadErr))
-                end
-            end)
-
-            if ok then
-                addLogLine("  ✓ Erfolgreich", COLORS.green)
-            else
-                errors = errors + 1
-                addLogLine("  ✗ Fehler: " .. tostring(execErr), COLORS.red)
-            end
-        else
-            addLogLine("  Kein Lua-Code", COLORS.muted)
-        end
-
-        task.wait(0.1)
-    end
-
-    progStatus.Text = errors == 0
-        and "Fertig! " .. #tasks .. " Tasks ausgeführt."
-        or  string.format("Fertig mit %d Fehler(n).", errors)
-
-    addLogLine(
-        errors == 0 and "Alle Tasks erfolgreich!" or "Abgeschlossen mit Fehlern.",
-        errors == 0 and COLORS.green or COLORS.red
-    )
-
-    abortBtn.Visible = false
-    backBtn.Visible = true
-    if loadBtn then loadBtn.Text = "In Studio laden" end
-end
-
--- ============================================================
--- PLUGIN API ROUTES (server-seitig)
--- ============================================================
--- /api/plugin/auth  — POST  { email, password } -> { session_token }
--- /api/plugin/projects — GET (X-Session-Token) -> { projects, credits }
--- /api/plugin/sync  — GET  ?projectId=... -> { projectName, tasks }
-
--- ============================================================
--- TOGGLE
--- ============================================================
+-- ── TOGGLE BUTTON ─────────────────────────────────────────────
 toggleButton.Click:Connect(function()
-    widget.Enabled = not widget.Enabled
+	widget.Enabled = not widget.Enabled
+	if widget.Enabled then
+		if currentScreen == "login" then
+			showLoginScreen()
+		else
+			showHomeScreen()
+		end
+	end
 end)
 
--- Beim Start: Token prüfen
-task.spawn(function()
-    local token = getToken()
-    if token and token ~= "" then
-        showScreen("projects")
-        loadProjects()
-    else
-        showScreen("login")
-    end
-end)
+-- ── INITIAL RENDER ────────────────────────────────────────────
+if sessionToken ~= "" then
+	showHomeScreen()
+else
+	showLoginScreen()
+end
+
+print("[XERON Engine v7] Plugin loaded — xeron-labs.com")

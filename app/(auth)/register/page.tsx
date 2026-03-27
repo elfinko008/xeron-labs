@@ -3,117 +3,249 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
-import { isBlockedEmail } from '@/lib/blocked-domains'
+import { createBrowserClient } from '@supabase/ssr'
+import { motion } from 'framer-motion'
+import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
+import { ParticleSystem } from '@/components/landing/ParticleSystem'
 
 export default function RegisterPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
+  const [username, setUsername] = useState('')
+  const [newsletter, setNewsletter] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  function getSupabase() {
+    return createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+  }
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
     setError('')
 
-    if (isBlockedEmail(email)) {
-      setError('Bitte nutze eine echte E-Mail-Adresse.')
-      return
-    }
-    if (password !== confirm) {
-      setError('Passwörter stimmen nicht überein.')
-      return
-    }
     if (password.length < 8) {
-      setError('Passwort muss mindestens 8 Zeichen lang sein.')
+      setError('Password must be at least 8 characters.')
       return
     }
 
     setLoading(true)
-    const supabase = createClient()
+    const supabase = getSupabase()
 
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username: username || undefined,
+          newsletter_opted_in: newsletter,
+        },
+      },
+    })
 
-    if (error) {
-      setError(error.message)
+    if (signUpError) {
+      setError(signUpError.message)
       setLoading(false)
       return
+    }
+
+    // Persist newsletter preference to profile if user row already exists
+    if (data.user && newsletter) {
+      await supabase
+        .from('profiles')
+        .update({ newsletter_opted_in: true } as never)
+        .eq('id', data.user.id)
     }
 
     router.push(`/auth/verify-code?email=${encodeURIComponent(email)}`)
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="font-display text-2xl">
-            <span className="text-gradient-red">XERON</span>
-            <span className="text-white"> Engine</span>
-          </Link>
-        </div>
+    <>
+      <LuxuryBackground />
+      <ParticleSystem count={20} />
 
-        <div className="glass-modal p-8">
-          <h1 className="font-display text-2xl mb-2">Account erstellen</h1>
-          <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
-            Starte kostenlos mit 10 Credits
-          </p>
-          <div className="glass-badge mb-6 inline-block">Kein Credit-Card nötig</div>
-
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div>
-              <label className="block text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>E-Mail</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="deine@email.com"
-                required
-                className="glass-input w-full px-4 py-3 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Passwort</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mindestens 8 Zeichen"
-                required
-                className="glass-input w-full px-4 py-3 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>Passwort bestätigen</label>
-              <input
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="glass-input w-full px-4 py-3 text-sm"
-              />
-            </div>
-            {error && (
-              <div className="text-sm px-4 py-3 rounded-xl" style={{ background: 'rgba(233,69,96,0.1)', border: '1px solid rgba(233,69,96,0.3)', color: '#e94560' }}>
-                {error}
-              </div>
-            )}
-            <button type="submit" disabled={loading} className="glass-button-primary w-full py-3 rounded-xl font-semibold text-sm mt-2">
-              {loading ? 'Account erstellen...' : 'Kostenlos registrieren'}
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
-            Bereits registriert?{' '}
-            <Link href="/login" style={{ color: 'var(--accent-red)' }} className="hover:opacity-80 transition-opacity">
-              Anmelden →
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px 16px',
+        position: 'relative',
+        zIndex: 1,
+      }}>
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+          style={{ width: '100%', maxWidth: 440 }}
+        >
+          {/* Logo */}
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
+              <span style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 48,
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, var(--gold-600), var(--gold-400), var(--plat-300), var(--gold-400))',
+                backgroundSize: '200% auto',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                animation: 'goldShimmer 4s linear infinite',
+                display: 'block',
+              }}>
+                XERON
+              </span>
             </Link>
-          </p>
-        </div>
+            <p className="t-label" style={{ marginTop: 4 }}>Create your account — it&apos;s free</p>
+          </div>
+
+          {/* Modal card */}
+          <div className="lg-modal" style={{ padding: '40px 36px' }}>
+
+            {/* Error */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ marginBottom: 20 }}
+              >
+                <span className="lg-badge-red" style={{ display: 'flex', width: '100%', borderRadius: 12, padding: '10px 16px', fontSize: 13, letterSpacing: 0 }}>
+                  {error}
+                </span>
+              </motion.div>
+            )}
+
+            <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Email */}
+              <div>
+                <label className="t-label" style={{ display: 'block', marginBottom: 8 }}>Email</label>
+                <input
+                  type="email"
+                  className="lg-input"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="t-label" style={{ display: 'block', marginBottom: 8 }}>Password</label>
+                <input
+                  type="password"
+                  className="lg-input"
+                  placeholder="At least 8 characters"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                />
+              </div>
+
+              {/* Username (optional) */}
+              <div>
+                <label className="t-label" style={{ display: 'block', marginBottom: 8 }}>
+                  Username <span style={{ color: 'var(--t-4)', textTransform: 'none', fontWeight: 400 }}>(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  className="lg-input"
+                  placeholder="YourUsername"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                  autoComplete="username"
+                />
+              </div>
+
+              {/* Newsletter opt-in */}
+              <label style={{
+                display: 'flex', gap: 12, cursor: 'pointer', alignItems: 'flex-start',
+                padding: '12px 14px',
+                background: 'rgba(212,160,23,0.04)',
+                border: '1px solid rgba(212,160,23,0.10)',
+                borderRadius: 14,
+                transition: 'border-color 0.2s',
+              }}>
+                <input
+                  type="checkbox"
+                  checked={newsletter}
+                  onChange={e => setNewsletter(e.target.checked)}
+                  style={{ marginTop: 2, width: 16, height: 16, accentColor: 'var(--gold-500)', flexShrink: 0, cursor: 'pointer' }}
+                />
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'var(--t-3)', lineHeight: 1.6 }}>
+                  Keep me updated with product news, tips, and exclusive offers.
+                </span>
+              </label>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className="btn-luxury"
+                disabled={loading}
+                style={{ width: '100%', marginTop: 4, opacity: loading ? 0.7 : 1, transition: 'opacity 0.2s' }}
+              >
+                {loading ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ animation: 'spin 0.8s linear infinite' }}>
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25" />
+                      <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                    Creating account…
+                  </span>
+                ) : 'Create Account'}
+              </button>
+            </form>
+
+            {/* Mandatory legal text — always visible, no checkbox */}
+            <p style={{
+              marginTop: 20,
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 12,
+              color: 'var(--t-4)',
+              lineHeight: 1.65,
+              textAlign: 'center',
+            }}>
+              By registering, you agree to our{' '}
+              <a href="/agb" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold-400)', textDecoration: 'underline' }}>
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a href="/datenschutz" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold-400)', textDecoration: 'underline' }}>
+                Privacy Policy
+              </a>.
+            </p>
+
+            {/* Sign in link */}
+            <p style={{
+              marginTop: 20, textAlign: 'center',
+              fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: 'var(--t-3)',
+            }}>
+              Already have an account?{' '}
+              <Link href="/login" style={{
+                color: 'var(--gold-400)', textDecoration: 'none', fontWeight: 600,
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.7'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+              >
+                Sign In
+              </Link>
+            </p>
+          </div>
+        </motion.div>
       </div>
-    </div>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
+    </>
   )
 }
