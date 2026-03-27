@@ -67,6 +67,9 @@
   --t-4:         #3A3D5C;
   --t-gold:      #D4A017;
   --t-plat:      #C4C8E0;
+
+  /* Promo banner height — set dynamically by PromoBanner component */
+  --promo-h: 0px;
 }
 
 [data-theme='light'] {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Zap, Star, Building2, AlertTriangle, Tag } from 'lucide-react'
+import { Check, Zap, Star, Building2, AlertTriangle } from 'lucide-react'
 import { Navbar } from '@/components/shared/Navbar'
 import { Footer } from '@/components/shared/Footer'
 import { WithdrawalWaiverModal } from '@/components/shared/WithdrawalWaiverModal'
@@ -286,92 +286,6 @@ function CreditPackCard({ pack, onBuy }: { pack: CreditPack; onBuy: (name: strin
   )
 }
 
-// ─── Coupon field ──────────────────────────────────────────────────────────────
-
-function CouponSection() {
-  const [code, setCode] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'valid' | 'invalid'>('idle')
-  const [message, setMessage] = useState('')
-
-  async function handleApply() {
-    if (!code.trim()) return
-    setStatus('loading')
-    try {
-      const res = await fetch('/api/coupon/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code.trim() }),
-      })
-      const data = await res.json()
-      if (res.ok && data.valid) {
-        setStatus('valid')
-        setMessage(data.message ?? `Coupon applied: ${data.discount}`)
-      } else {
-        setStatus('invalid')
-        setMessage(data.error ?? 'Invalid or expired coupon code.')
-      }
-    } catch {
-      setStatus('invalid')
-      setMessage('Could not validate coupon. Please try again.')
-    }
-  }
-
-  return (
-    <div>
-      <SectionDivider label="COUPON CODE" />
-      <div style={{ maxWidth: 480, margin: '0 auto' }}>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <div style={{ position: 'relative', flex: 1 }}>
-            <Tag size={16} color="var(--t-3)" style={{
-              position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none',
-            }} />
-            <input
-              type="text"
-              className="lg-input"
-              placeholder="Enter coupon code"
-              value={code}
-              onChange={e => { setCode(e.target.value.toUpperCase()); setStatus('idle'); setMessage('') }}
-              onKeyDown={e => e.key === 'Enter' && handleApply()}
-              style={{ paddingLeft: 44, letterSpacing: '0.08em', fontFamily: "'JetBrains Mono', monospace", fontSize: 14 }}
-            />
-          </div>
-          <button
-            className="btn-luxury"
-            onClick={handleApply}
-            disabled={status === 'loading' || !code.trim()}
-            style={{ whiteSpace: 'nowrap', opacity: (!code.trim() || status === 'loading') ? 0.6 : 1 }}
-          >
-            {status === 'loading' ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ animation: 'spin 0.8s linear infinite' }}>
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25" />
-                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-              </svg>
-            ) : 'Apply'}
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {message && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              style={{ marginTop: 10 }}
-            >
-              <span
-                className={status === 'valid' ? 'lg-badge-green' : 'lg-badge-red'}
-                style={{ display: 'inline-flex', borderRadius: 10, padding: '8px 14px', fontSize: 13, letterSpacing: 0 }}
-              >
-                {message}
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
-  )
-}
-
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ShopPage() {
@@ -411,7 +325,7 @@ export default function ShopPage() {
     <>
       <Navbar />
 
-      <main style={{ paddingTop: 68 }}>
+      <main style={{ paddingTop: 'calc(var(--promo-h, 0px) + 68px)' as any }}>
         {/* Hero */}
         <section style={{ padding: '80px 0 60px', textAlign: 'center' }}>
           <div className="container-luxury">
@@ -559,9 +473,6 @@ export default function ShopPage() {
               </p>
             </motion.div>
           </div>
-
-          {/* ── Coupon code ── */}
-          <CouponSection />
 
         </div>
       </main>

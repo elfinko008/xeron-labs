@@ -3,8 +3,8 @@ import { Footer } from '@/components/shared/Footer'
 import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
 
 export const metadata = {
-  title: 'Datenschutzerklärung — XERON Engine',
-  description: 'Datenschutzerklärung der XERON Engine gemäß DSGVO/GDPR.',
+  title: 'Privacy Policy — XERON Engine',
+  description: 'Privacy Policy for XERON Engine pursuant to GDPR (EU) 2016/679.',
 }
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
@@ -31,12 +31,12 @@ export default function DatenschutzPage() {
 
           {/* Header */}
           <div style={{ marginBottom: '40px' }}>
-            <span className="lg-badge" style={{ marginBottom: '16px' }}>Datenschutz</span>
+            <span className="lg-badge" style={{ marginBottom: '16px' }}>Privacy</span>
             <h1 className="t-display" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '12px', marginBottom: '10px' }}>
-              Datenschutzerklärung
+              Privacy Policy
             </h1>
             <p className="t-body" style={{ fontSize: '14px', color: 'var(--t-3)' }}>
-              Stand: März 2026 | Gemäß DSGVO (EU) 2016/679
+              As of March 2026 | Pursuant to GDPR (EU) 2016/679
             </p>
           </div>
 

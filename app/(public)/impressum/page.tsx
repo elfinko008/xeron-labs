@@ -3,8 +3,8 @@ import { Footer } from '@/components/shared/Footer'
 import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
 
 export const metadata = {
-  title: 'Impressum — XERON Engine',
-  description: 'Impressum der XERON Engine gemäß § 5 TMG.',
+  title: 'Legal Notice — XERON Engine',
+  description: 'Legal notice for XERON Engine pursuant to § 5 TMG.',
 }
 
 export default function ImpressumPage() {
@@ -18,12 +18,12 @@ export default function ImpressumPage() {
 
           {/* Header */}
           <div style={{ marginBottom: '40px' }}>
-            <span className="lg-badge" style={{ marginBottom: '16px' }}>Rechtliches</span>
+            <span className="lg-badge" style={{ marginBottom: '16px' }}>Legal</span>
             <h1 className="t-display" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '12px', marginBottom: '10px' }}>
-              Impressum
+              Legal Notice
             </h1>
             <p className="t-body" style={{ fontSize: '14px', color: 'var(--t-3)' }}>
-              Angaben gemäß § 5 TMG
+              Pursuant to § 5 TMG (German Telemedia Act)
             </p>
           </div>
 
@@ -35,10 +35,13 @@ export default function ImpressumPage() {
                 Anbieter
               </h2>
               <div className="t-body" style={{ fontSize: '14px', color: 'var(--t-2)', lineHeight: '1.9' }}>
-                <p><strong style={{ color: 'var(--t-1)' }}>XERON Labs</strong></p>
-                <p>[Straße und Hausnummer]</p>
-                <p>[PLZ] [Stadt]</p>
-                <p>Deutschland</p>
+                <p><strong style={{ color: 'var(--t-1)' }}>XERON Engine</strong></p>
+                <p>Contact via email only</p>
+                <p>
+                  <a href="mailto:support@xeron-labs.com" style={{ color: 'var(--gold-400)', textDecoration: 'none' }}>
+                    support@xeron-labs.com
+                  </a>
+                </p>
               </div>
             </div>
 
@@ -71,10 +74,8 @@ export default function ImpressumPage() {
               <div className="t-body" style={{ fontSize: '14px', color: 'var(--t-2)', lineHeight: '1.9' }}>
                 <p>Gemäß § 18 Abs. 2 MStV:</p>
                 <p style={{ marginTop: '8px' }}>
-                  [Vorname Nachname]<br />
-                  [Straße und Hausnummer]<br />
-                  [PLZ] [Stadt]<br />
-                  Deutschland
+                  XERON Engine<br />
+                  E-Mail: support@xeron-labs.com
                 </p>
               </div>
             </div>
@@ -119,20 +120,6 @@ export default function ImpressumPage() {
               </div>
             </div>
 
-            {/* Hinweis Platzhalter */}
-            <div
-              style={{
-                background: 'rgba(212,160,23,0.06)',
-                border: '1px solid rgba(212,160,23,0.22)',
-                borderRadius: '16px',
-                padding: '16px 20px',
-              }}
-            >
-              <p className="t-body" style={{ fontSize: '13px', color: 'var(--t-3)', margin: 0 }}>
-                ⚠ Hinweis: Die mit [eckigen Klammern] markierten Felder sind Platzhalter und müssen mit echten
-                Angaben befüllt werden, bevor diese Seite live geht.
-              </p>
-            </div>
 
           </div>
         </div>

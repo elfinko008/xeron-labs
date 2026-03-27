@@ -1,6 +1,5 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
 import { Globe } from 'lucide-react'
 
 const LANGUAGES = [
@@ -17,11 +16,18 @@ type Locale = typeof LANGUAGES[number]['code']
 
 export default function LanguageSelector({ currentLocale = 'en' }: { currentLocale?: string }) {
   const [open, setOpen] = useState(false)
+  const [activeLocale, setActiveLocale] = useState(currentLocale)
   const ref = useRef<HTMLDivElement>(null)
-  const router = useRouter()
-  const pathname = usePathname()
 
-  const current = LANGUAGES.find(l => l.code === currentLocale) || LANGUAGES[0]
+  const current = LANGUAGES.find(l => l.code === activeLocale) || LANGUAGES[0]
+
+  useEffect(() => {
+    // Read from cookie on mount
+    try {
+      const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/)
+      if (match) setActiveLocale(match[1])
+    } catch {}
+  }, [])
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
@@ -33,16 +39,12 @@ export default function LanguageSelector({ currentLocale = 'en' }: { currentLoca
 
   const switchLocale = (code: Locale) => {
     setOpen(false)
+    setActiveLocale(code)
+    // Save to cookie and localStorage only — no URL changes
     try { document.cookie = `NEXT_LOCALE=${code};path=/;max-age=31536000` } catch {}
-    // Replace locale prefix in path
-    const segments = pathname.split('/')
-    const supported = LANGUAGES.map(l => l.code)
-    if (supported.includes(segments[1] as Locale)) {
-      segments[1] = code === 'en' ? '' : code
-      router.push(segments.filter(Boolean).join('/') || '/')
-    } else {
-      router.push(code === 'en' ? pathname : `/${code}${pathname}`)
-    }
+    try { localStorage.setItem('xeron-lang', code) } catch {}
+    // Reload to apply new locale via cookie
+    window.location.reload()
   }
 
   return (
@@ -76,13 +78,13 @@ export default function LanguageSelector({ currentLocale = 'en' }: { currentLoca
               style={{
                 display: 'flex', alignItems: 'center', gap: 10, width: '100%',
                 padding: '9px 12px', borderRadius: 10, border: 'none', cursor: 'pointer',
-                background: currentLocale === lang.code ? 'rgba(212,160,23,0.12)' : 'transparent',
-                color: currentLocale === lang.code ? 'var(--gold-400)' : 'var(--t-2)',
+                background: activeLocale === lang.code ? 'rgba(212,160,23,0.12)' : 'transparent',
+                color: activeLocale === lang.code ? 'var(--gold-400)' : 'var(--t-2)',
                 fontSize: 13, fontFamily: "'DM Sans',sans-serif", textAlign: 'left',
                 transition: 'background 0.2s',
               }}
-              onMouseEnter={e => { if (currentLocale !== lang.code) (e.currentTarget as HTMLElement).style.background = 'var(--glass-2)' }}
-              onMouseLeave={e => { if (currentLocale !== lang.code) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+              onMouseEnter={e => { if (activeLocale !== lang.code) (e.currentTarget as HTMLElement).style.background = 'var(--glass-2)' }}
+              onMouseLeave={e => { if (activeLocale !== lang.code) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
             >
               <span style={{ fontSize: 16 }}>{lang.flag}</span>
               <span>{lang.label}</span>

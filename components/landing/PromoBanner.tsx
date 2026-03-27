@@ -1,170 +1,103 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
+import { X } from 'lucide-react'
 
-const DURATION_HOURS = 72;
-const SESSION_KEY_END  = 'xeron_promo_end';
-const SESSION_KEY_HIDE = 'xeron_promo_hidden';
-
-function getEndTime(): number {
-  try {
-    const stored = sessionStorage.getItem(SESSION_KEY_END);
-    if (stored) return parseInt(stored);
-    const end = Date.now() + DURATION_HOURS * 60 * 60 * 1000;
-    sessionStorage.setItem(SESSION_KEY_END, String(end));
-    return end;
-  } catch {
-    return Date.now() + DURATION_HOURS * 60 * 60 * 1000;
-  }
-}
-
-function formatCountdown(ms: number): string {
-  if (ms <= 0) return '00:00:00';
-  const totalSec = Math.floor(ms / 1000);
-  const h = Math.floor(totalSec / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  const s = totalSec % 60;
-  return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
-}
+const SESSION_KEY = 'xeron_promo_hidden'
+const BANNER_H = 36
 
 export default function PromoBanner() {
-  const [visible,   setVisible]   = useState(false);
-  const [countdown, setCountdown] = useState('--:--:--');
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     try {
-      if (sessionStorage.getItem(SESSION_KEY_HIDE) === '1') return;
+      if (sessionStorage.getItem(SESSION_KEY) === '1') return
     } catch { /* ignore */ }
-    setVisible(true);
-
-    const endTime = getEndTime();
-
-    const tick = () => {
-      const remaining = endTime - Date.now();
-      setCountdown(formatCountdown(remaining));
-      if (remaining <= 0) clearInterval(id);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
+    setVisible(true)
+    // Signal navbar and layout
+    document.documentElement.style.setProperty('--promo-h', `${BANNER_H}px`)
+  }, [])
 
   const handleClose = () => {
-    setVisible(false);
-    try { sessionStorage.setItem(SESSION_KEY_HIDE, '1'); } catch { /* ignore */ }
-  };
+    setVisible(false)
+    try { sessionStorage.setItem(SESSION_KEY, '1') } catch { /* ignore */ }
+    document.documentElement.style.setProperty('--promo-h', '0px')
+  }
 
-  if (!visible) return null;
+  if (!visible) return null
 
   return (
-    <>
-      <div
-        className="promo-banner"
-        style={{
-          position: 'relative',
-          width: '100%',
-          background: 'linear-gradient(90deg, var(--gold-600) 0%, var(--gold-400) 35%, #f5d87a 50%, var(--gold-400) 65%, var(--gold-600) 100%)',
-          backgroundSize: '200% auto',
-          animation: 'promoBannerShimmer 4s linear infinite',
-          padding: '10px 48px 10px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '16px',
-          zIndex: 100,
-        }}
-        role="banner"
-        aria-label="Promotional offer"
-      >
-        {/* Text */}
-        <p style={{
-          margin: 0,
-          color: '#0a0a0a',
-          fontSize: '0.875rem',
-          fontWeight: 700,
-          letterSpacing: '0.03em',
-          textAlign: 'center',
-          lineHeight: 1.4,
-        }}>
-          ✦&nbsp; LIMITED OFFER: 3 Months Pro for the price of 1 — Ends in{' '}
-          <span style={{
-            fontFamily: "'Outfit', monospace",
-            fontVariantNumeric: 'tabular-nums',
-            fontWeight: 800,
-          }}>
-            {countdown}
-          </span>
-          &nbsp; ✦
-        </p>
-
-        {/* CTA */}
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: BANNER_H,
+        zIndex: 1001,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 12,
+        background: 'linear-gradient(90deg, rgba(138,95,0,0.95) 0%, rgba(212,160,23,0.95) 30%, rgba(232,188,58,0.98) 50%, rgba(212,160,23,0.95) 70%, rgba(138,95,0,0.95) 100%)',
+        backgroundSize: '200% auto',
+        animation: 'promoShimmer 6s linear infinite',
+        backdropFilter: 'blur(8px)',
+        borderBottom: '1px solid rgba(232,188,58,0.3)',
+      }}
+    >
+      <span style={{
+        fontSize: 12,
+        fontWeight: 600,
+        color: '#0A0900',
+        letterSpacing: '0.04em',
+        fontFamily: "'DM Sans', sans-serif",
+      }}>
+        ✦ LIMITED — 3 Months Pro for the price of 1 &nbsp;
         <a
           href="/shop"
           style={{
-            flexShrink: 0,
-            padding: '5px 14px',
-            background: '#0a0a0a',
-            color: 'var(--gold-400)',
-            borderRadius: '6px',
-            fontSize: '12px',
-            fontWeight: 700,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-            transition: 'background 0.2s, color 0.2s',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(0,0,0,0.85)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background = '#0a0a0a';
+            color: '#0A0900',
+            fontWeight: 800,
+            textDecoration: 'underline',
+            textUnderlineOffset: 2,
           }}
         >
-          Claim Now
+          Claim Now →
         </a>
+      </span>
 
-        {/* Close */}
-        <button
-          onClick={handleClose}
-          aria-label="Close promo banner"
-          style={{
-            position: 'absolute',
-            right: '12px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'rgba(0,0,0,0.15)',
-            border: 'none',
-            borderRadius: '50%',
-            width: '26px',
-            height: '26px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#0a0a0a',
-            fontSize: '14px',
-            lineHeight: 1,
-            transition: 'background 0.2s',
-            padding: 0,
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.3)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.15)';
-          }}
-        >
-          ✕
-        </button>
-      </div>
+      <button
+        onClick={handleClose}
+        aria-label="Close"
+        style={{
+          position: 'absolute',
+          right: 12,
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: 'rgba(10,9,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          padding: 4,
+          borderRadius: 4,
+          transition: 'color 0.2s',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.color = '#0A0900')}
+        onMouseLeave={e => (e.currentTarget.style.color = 'rgba(10,9,0,0.6)')}
+      >
+        <X size={14} />
+      </button>
 
       <style>{`
-        @keyframes promoBannerShimmer {
+        @keyframes promoShimmer {
           0%   { background-position: 200% center; }
           100% { background-position: -200% center; }
         }
+        @media (max-width: 768px) {
+          .promo-mobile-hide { display: none; }
+        }
       `}</style>
-    </>
-  );
+    </div>
+  )
 }

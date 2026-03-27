@@ -3,8 +3,8 @@ import { Footer } from '@/components/shared/Footer'
 import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
 
 export const metadata = {
-  title: 'Widerrufsbelehrung — XERON Engine',
-  description: 'Widerrufsbelehrung und Muster-Widerrufsformular gemäß § 312g BGB i.V.m. Art. 246a EGBGB.',
+  title: 'Right of Withdrawal — XERON Engine',
+  description: 'Right of withdrawal notice pursuant to § 312g BGB in conjunction with Art. 246a EGBGB.',
 }
 
 export default function WiderrufPage() {
@@ -18,12 +18,12 @@ export default function WiderrufPage() {
 
           {/* Header */}
           <div style={{ marginBottom: '40px' }}>
-            <span className="lg-badge" style={{ marginBottom: '16px' }}>Rechtliches</span>
+            <span className="lg-badge" style={{ marginBottom: '16px' }}>Legal</span>
             <h1 className="t-display" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '12px', marginBottom: '10px' }}>
-              Widerrufsbelehrung
+              Right of Withdrawal
             </h1>
             <p className="t-body" style={{ fontSize: '14px', color: 'var(--t-3)' }}>
-              Gemäß § 312g BGB i.V.m. Art. 246a EGBGB | Stand: März 2026
+              Pursuant to § 312g BGB in conjunction with Art. 246a EGBGB | March 2026
             </p>
           </div>
 

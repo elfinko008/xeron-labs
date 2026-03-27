@@ -68,11 +68,11 @@ const STATUS_COLORS: Record<string, string> = {
 // ─── Nav Items ────────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: NavEntry[] = [
-  { id: 'generate',   label: 'Generate Game', icon: <Sparkles size={18} />, creditCost: '50 cr',   badge: 'Pro+', badgeVariant: 'pro' },
+  { id: 'game',       label: 'Generate Game', icon: <Sparkles size={18} />, creditCost: '50 cr',   badge: 'Pro+', badgeVariant: 'pro' },
   { id: 'script',     label: 'Script',         icon: <Code2    size={18} />, creditCost: '10 cr' },
-  { id: 'ui',         label: 'UI',             icon: <Layout   size={18} />, creditCost: '10 cr' },
-  { id: 'fix',        label: 'Fix',            icon: <Wrench   size={18} />, creditCost: '15–50 cr' },
-  { id: 'clean',      label: 'Clean',          icon: <Trash2   size={18} />, creditCost: '10 cr' },
+  { id: 'ui',         label: 'UI Builder',     icon: <Layout   size={18} />, creditCost: '10 cr' },
+  { id: 'fix',        label: 'Fix Code',       icon: <Wrench   size={18} />, creditCost: '15–50 cr' },
+  { id: 'clean',      label: 'Clean Explorer', icon: <Trash2   size={18} />, creditCost: '10 cr' },
   { id: 'diagnose',   label: 'Diagnose',       icon: <Stethoscope size={18} />, creditCost: '5 cr' },
   { separator: true, id: 'sep1' },
   { id: 'projects',   label: 'My Projects',    icon: <FolderOpen  size={18} /> },
@@ -81,6 +81,15 @@ const NAV_ITEMS: NavEntry[] = [
   { id: 'api',        label: 'API',            icon: <Zap         size={18} />, badge: 'Pro+', badgeVariant: 'pro' },
   { id: 'account',    label: 'Account',        icon: <BarChart2   size={18} /> },
 ]
+
+// Items that navigate to external pages instead of switching mode
+const NAV_ROUTES: Record<string, string> = {
+  projects: '/dashboard/projects',
+  achievements: '/dashboard/achievements',
+  shop: '/shop',
+  api: '/api-docs',
+  account: '/dashboard/account',
+}
 
 const PLAN_MAX_CREDITS: Record<string, number> = {
   free: 10, starter: 100, pro: 500, enterprise: 2000,
@@ -190,9 +199,6 @@ function CreditWidget({
           style={{ width: `${pct}%` }}
         />
       </div>
-      <div style={{ fontSize: 11, color: 'var(--t-3)', marginBottom: 12, textAlign: 'right' }}>
-        {credits} / {maxCredits}
-      </div>
 
       {/* Action buttons */}
       <div style={{ display: 'flex', gap: 8 }}>
@@ -279,6 +285,7 @@ export default function Sidebar({
 
         {/* Logo row */}
         <div
+          onClick={() => onModeChange('home')}
           style={{
             padding: collapsed ? '16px 0' : '16px 16px',
             borderBottom: '1px solid var(--glass-border)',
@@ -287,7 +294,11 @@ export default function Sidebar({
             justifyContent: collapsed ? 'center' : 'flex-start',
             minHeight: 60,
             flexShrink: 0,
+            cursor: 'pointer',
+            transition: 'background 0.2s',
           }}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--glass-1)'}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
         >
           <AnimatePresence mode="wait">
             {collapsed ? (
@@ -432,12 +443,18 @@ export default function Sidebar({
             }
 
             const item = entry as NavItem
-            const isActive = activeMode === item.id
+            const isActive = activeMode === item.id && !NAV_ROUTES[item.id]
 
             return (
               <button
                 key={item.id}
-                onClick={() => onModeChange(item.id)}
+                onClick={() => {
+                  if (NAV_ROUTES[item.id]) {
+                    router.push(NAV_ROUTES[item.id])
+                  } else {
+                    onModeChange(item.id)
+                  }
+                }}
                 title={collapsed ? `${item.label}${item.creditCost ? ` [${item.creditCost}]` : ''}` : undefined}
                 style={{
                   display: 'flex',

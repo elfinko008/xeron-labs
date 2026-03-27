@@ -14,6 +14,7 @@ const PricingCalculator = dynamic(() => import('@/components/landing/PricingCalc
 const FeatureCard3D = dynamic(() => import('@/components/landing/FeatureCard3D'))
 const AIThinkingVisualizer = dynamic(() => import('@/components/landing/AIThinkingVisualizer'))
 const ComparisonSlider = dynamic(() => import('@/components/landing/ComparisonSlider'))
+const DemoTerminal = dynamic(() => import('@/components/landing/DemoTerminal'))
 
 const PLANS = [
   {
@@ -84,7 +85,7 @@ export default function LandingPage() {
       <Navbar />
 
       {/* ── HERO ──────────────────────────────────── */}
-      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 120, paddingBottom: 80, position: 'relative' }}>
+      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 'calc(var(--promo-h, 0px) + 68px + 52px)' as any, paddingBottom: 80, position: 'relative' }}>
         <LandingClientSection />
 
         <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', textAlign: 'center', zIndex: 1 }}>
@@ -113,11 +114,14 @@ export default function LandingPage() {
       <section id="demo" className="section-pad">
         <div className="container-luxury">
           <ScrollReveal>
-            <div style={{ textAlign: 'center', marginBottom: 60 }}>
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
               <div className="lg-badge" style={{ marginBottom: 16, display: 'inline-flex' }}><Play size={12} />  Try It Now</div>
               <h2 className="t-headline" style={{ fontSize: 'clamp(32px,4vw,52px)', marginBottom: 16 }}>See It In Action</h2>
-              <p className="t-body" style={{ maxWidth: 480, margin: '0 auto' }}>Type a game idea and see how XERON would plan it.</p>
+              <p className="t-body" style={{ maxWidth: 480, margin: '0 auto' }}>Select a preset and watch XERON plan and generate a complete Roblox game in real time.</p>
             </div>
+          </ScrollReveal>
+          <ScrollReveal delay={0.15}>
+            <DemoTerminal />
           </ScrollReveal>
         </div>
       </section>
@@ -127,8 +131,8 @@ export default function LandingPage() {
         <div className="container-luxury">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
             {[
-              { value: '10K+', label: 'Games Generated', icon: '✦' },
-              { value: '2 Min', label: 'Average Time', icon: '⚡' },
+              { value: '150+', label: 'Games Created', icon: '✦' },
+              { value: '2 Min', label: 'Avg. Generation', icon: '⚡' },
               { value: '6', label: 'AI Modes', icon: '◈' },
               { value: '7', label: 'Languages', icon: '🌐' },
             ].map((stat, i) => (

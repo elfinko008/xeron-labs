@@ -199,7 +199,7 @@ export default function CommunityPage() {
                   {[
                     'Follow us on one or more platforms',
                     'Join our Discord: discord.gg/u5HF4CQPug',
-                    'Create a ticket in the #credits-beantragen channel',
+                    'Create a ticket in the #apply-for-credits channel',
                     'Select which platforms you followed',
                     'Include your username for each platform',
                     'Our team reviews manually',

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Sparkles } from 'lucide-react'
+import { Menu, X, Sparkles, LayoutDashboard } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import LanguageSelector from '@/components/LanguageSelector'
 
@@ -18,8 +18,20 @@ export function Navbar({ locale = 'en' }: { locale?: string }) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [promoH, setPromoH] = useState(0)
 
   useEffect(() => {
+    // Read initial promo height from CSS variable
+    const readPromoH = () => {
+      const h = getComputedStyle(document.documentElement).getPropertyValue('--promo-h')
+      setPromoH(parseInt(h) || 0)
+    }
+    readPromoH()
+
+    // Observe CSS variable changes via MutationObserver on style attr
+    const obs = new MutationObserver(readPromoH)
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] })
+
     const onScroll = () => {
       setScrolled(window.scrollY > 20)
       const doc = document.documentElement
@@ -28,7 +40,10 @@ export function Navbar({ locale = 'en' }: { locale?: string }) {
       setProgress(height > 0 ? (scroll / height) * 100 : 0)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      obs.disconnect()
+    }
   }, [])
 
   return (
@@ -36,9 +51,15 @@ export function Navbar({ locale = 'en' }: { locale?: string }) {
       <nav
         className="lg-nav"
         style={{
-          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-          height: 68, display: 'flex', alignItems: 'center',
-          transition: 'border-bottom-color 0.3s ease',
+          position: 'fixed',
+          top: promoH,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          height: 68,
+          display: 'flex',
+          alignItems: 'center',
+          transition: 'top 0.3s ease, border-bottom-color 0.3s ease',
           borderBottomColor: scrolled ? 'rgba(212,160,23,0.15)' : 'rgba(212,160,23,0.08)',
         }}
       >
@@ -68,6 +89,20 @@ export function Navbar({ locale = 'en' }: { locale?: string }) {
 
           {/* Desktop Nav */}
           <div style={{ display: 'flex', gap: 4, alignItems: 'center' }} className="hidden-mobile">
+            {/* Dashboard link — first, gold tinted */}
+            <Link href="/dashboard" style={{
+              color: 'var(--gold-400)', fontSize: 14, fontFamily: "'DM Sans',sans-serif", fontWeight: 600,
+              padding: '6px 14px', borderRadius: 10, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6,
+              transition: 'color 0.2s, background 0.2s',
+              background: 'rgba(212,160,23,0.06)',
+              border: '1px solid rgba(212,160,23,0.15)',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,160,23,0.12)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,160,23,0.30)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,160,23,0.06)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,160,23,0.15)' }}
+            >
+              <LayoutDashboard size={14} />
+              Dashboard
+            </Link>
             {NAV_LINKS.map(link => (
               <Link key={link.href} href={link.href} style={{
                 color: 'var(--t-3)', fontSize: 14, fontFamily: "'DM Sans',sans-serif", fontWeight: 500,
@@ -111,10 +146,19 @@ export function Navbar({ locale = 'en' }: { locale?: string }) {
       {/* Mobile menu */}
       {mobileOpen && (
         <div style={{
-          position: 'fixed', top: 68, left: 0, right: 0, bottom: 0, zIndex: 999,
+          position: 'fixed', top: promoH + 68, left: 0, right: 0, bottom: 0, zIndex: 999,
           background: 'rgba(3,3,16,0.97)', backdropFilter: 'blur(40px)',
           padding: '24px', display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto',
         }}>
+          {/* Dashboard first on mobile */}
+          <Link href="/dashboard" onClick={() => setMobileOpen(false)} style={{
+            color: 'var(--gold-400)', fontSize: 18, fontFamily: "'DM Sans',sans-serif", fontWeight: 600,
+            padding: '14px 16px', borderRadius: 16, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10,
+            background: 'rgba(212,160,23,0.08)', border: '1px solid rgba(212,160,23,0.25)',
+          }}>
+            <LayoutDashboard size={20} />
+            Dashboard
+          </Link>
           {NAV_LINKS.map(link => (
             <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)} style={{
               color: 'var(--t-2)', fontSize: 18, fontFamily: "'DM Sans',sans-serif", fontWeight: 500,

@@ -3,8 +3,8 @@ import { Footer } from '@/components/shared/Footer'
 import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
 
 export const metadata = {
-  title: 'AGB — XERON Engine',
-  description: 'Allgemeine Geschäftsbedingungen der XERON Engine SaaS-Plattform.',
+  title: 'Terms of Service — XERON Engine',
+  description: 'Terms of Service for the XERON Engine SaaS platform.',
 }
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
@@ -30,12 +30,12 @@ export default function AGBPage() {
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 24px 0' }}>
           {/* Header */}
           <div style={{ marginBottom: '40px' }}>
-            <span className="lg-badge" style={{ marginBottom: '16px' }}>Rechtliches</span>
+            <span className="lg-badge" style={{ marginBottom: '16px' }}>Legal</span>
             <h1 className="t-display" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginTop: '12px', marginBottom: '10px' }}>
-              Allgemeine Geschäftsbedingungen
+              Terms of Service
             </h1>
             <p className="t-body" style={{ fontSize: '14px', color: 'var(--t-3)' }}>
-              Stand: März 2026 | XERON Labs — xeron-labs.com
+              As of March 2026 | XERON Engine — xeron-labs.com
             </p>
           </div>
 
