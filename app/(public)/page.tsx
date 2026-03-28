@@ -1,15 +1,14 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { Sparkles, Code2, Layout, Zap, Globe, Star, ChevronDown, Play } from 'lucide-react'
+import { Sparkles, Code2, Layout, Zap, Globe, Star, Play } from 'lucide-react'
 import { Navbar } from '@/components/shared/Navbar'
 import { Footer } from '@/components/shared/Footer'
-import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
-import { ParticleSystem } from '@/components/landing/ParticleSystem'
 import PromoBanner from '@/components/landing/PromoBanner'
 import { ScrollReveal } from '@/components/landing/ScrollReveal'
 import StylePresetsShowcase from '@/components/landing/StylePresetsShowcase'
 import { LandingClientSection } from '@/components/landing/LandingClientSection'
 
+import { OceanDepthBackgroundDynamic as OceanDepthBackground } from '@/components/backgrounds/OceanDepthBackgroundDynamic'
 const PricingCalculator = dynamic(() => import('@/components/landing/PricingCalculator'))
 const FeatureCard3D = dynamic(() => import('@/components/landing/FeatureCard3D'))
 const AIThinkingVisualizer = dynamic(() => import('@/components/landing/AIThinkingVisualizer'))
@@ -79,19 +78,13 @@ const HOW_IT_WORKS = [
 export default function LandingPage() {
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
-      <LuxuryBackground />
-      <ParticleSystem count={40} />
+      <OceanDepthBackground />
       <PromoBanner />
       <Navbar />
 
       {/* ── HERO ──────────────────────────────────── */}
       <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 'calc(var(--promo-h, 0px) + 68px + 52px)' as any, paddingBottom: 80, position: 'relative' }}>
         <LandingClientSection />
-
-        <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', textAlign: 'center', zIndex: 1 }}>
-          <div style={{ color: 'var(--t-3)', fontSize: 12, letterSpacing: '0.1em', marginBottom: 8 }}>DISCOVER XERON</div>
-          <ChevronDown size={20} color="var(--gold-400)" style={{ margin: '0 auto', display: 'block' }} />
-        </div>
       </section>
 
       {/* ── AI THINKING VISUALIZER ─────────────────── */}
@@ -252,7 +245,7 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 20, marginBottom: 48 }}>
             {PLANS.map((plan, i) => (
               <ScrollReveal key={plan.name} delay={i * 0.08}>
-                <div className={`lg-card${plan.popular ? ' plan-card-active' : ''}`} style={{ padding: 28, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className={`lg-card${plan.popular ? ' plan-card-active plan-card-pro-border' : ''}`} style={{ padding: 28, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   {plan.popular && (
                     <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
                       <span className="lg-badge" style={{ background: 'var(--gold-500)', color: '#0A0900', borderColor: 'transparent' }}>Most Popular</span>
@@ -300,7 +293,7 @@ export default function LandingPage() {
               <ScrollReveal key={pack.name}>
                 <Link href="/shop" style={{ textDecoration: 'none' }}>
                   <div className="lg-card" style={{ padding: '20px 24px', textAlign: 'center', minWidth: 140 }}>
-                    <div style={{ color: 'var(--gold-400)', fontSize: 18, fontWeight: 700, fontFamily: "'Outfit',sans-serif" }}>🪙 {pack.credits}</div>
+                    <div style={{ color: 'var(--gold-bright)', fontSize: 18, fontFamily: "'Tenor Sans',sans-serif", letterSpacing: '0.05em' }}>🪙 {pack.credits}</div>
                     <div className="t-label" style={{ margin: '6px 0 10px' }}>{pack.name} Pack</div>
                     <div style={{ color: 'var(--t-1)', fontSize: 16, fontWeight: 600 }}>{pack.price.toFixed(2).replace('.', ',')}€</div>
                   </div>

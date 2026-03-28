@@ -25,6 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Tenor+Sans&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Tenor+Sans&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&display=swap" />
         <script dangerouslySetInnerHTML={{
           __html: `
             try {
@@ -49,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 border: '1px solid rgba(212,160,23,0.25)',
                 borderRadius: '16px',
                 backdropFilter: 'blur(20px)',
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Tenor Sans', sans-serif",
               },
               success: {
                 iconTheme: { primary: '#E8BC3A', secondary: '#0A0900' },

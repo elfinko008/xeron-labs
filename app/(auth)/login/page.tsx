@@ -5,8 +5,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { motion } from 'framer-motion'
-import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
-import { ParticleSystem } from '@/components/landing/ParticleSystem'
+import dynamic from 'next/dynamic'
+
+const NightHorizonBackground = dynamic(() => import('@/components/backgrounds/NightHorizonBackground').then(m => ({ default: m.NightHorizonBackground })), { ssr: false })
 
 export default function LoginPage() {
   const router = useRouter()
@@ -53,8 +54,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <LuxuryBackground />
-      <ParticleSystem count={20} />
+      <NightHorizonBackground />
 
       <div style={{
         minHeight: '100vh',

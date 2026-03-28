@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase'
-import { LuxuryBackground } from '@/components/landing/LuxuryBackground'
+import dynamic from 'next/dynamic'
 import Sidebar from '@/components/dashboard/Sidebar'
+
+const YachtInteriorBackground = dynamic(() => import('@/components/backgrounds/YachtInteriorBackground').then(m => ({ default: m.YachtInteriorBackground })), { ssr: false })
 import CommandPalette from '@/components/dashboard/CommandPalette'
 import GenerateMode from '@/components/dashboard/GenerateMode'
 import ScriptEditor from '@/components/dashboard/ScriptEditor'
@@ -80,7 +82,7 @@ export default function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--void)', overflow: 'hidden' }}>
-      <LuxuryBackground />
+      <YachtInteriorBackground />
 
       {/* Sidebar */}
       <Sidebar

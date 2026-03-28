@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 
 const SESSION_KEY = 'xeron_promo_hidden'
-const BANNER_H = 36
+const BANNER_H = 32
 
 export default function PromoBanner() {
   const [visible, setVisible] = useState(false)
@@ -28,6 +28,7 @@ export default function PromoBanner() {
 
   return (
     <div
+      className="promo-banner"
       style={{
         position: 'fixed',
         top: 0,
@@ -39,28 +40,26 @@ export default function PromoBanner() {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 12,
-        background: 'linear-gradient(90deg, rgba(138,95,0,0.95) 0%, rgba(212,160,23,0.95) 30%, rgba(232,188,58,0.98) 50%, rgba(212,160,23,0.95) 70%, rgba(138,95,0,0.95) 100%)',
-        backgroundSize: '200% auto',
-        animation: 'promoShimmer 6s linear infinite',
         backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid rgba(232,188,58,0.3)',
+        borderBottom: '0.5px solid rgba(242,192,80,0.20)',
       }}
     >
       <span style={{
-        fontSize: 12,
-        fontWeight: 600,
-        color: '#0A0900',
-        letterSpacing: '0.04em',
-        fontFamily: "'DM Sans', sans-serif",
+        fontSize: 11,
+        fontFamily: "'Tenor Sans', sans-serif",
+        letterSpacing: '0.15em',
+        textTransform: 'uppercase' as const,
+        color: 'var(--gold-pale)',
       }}>
-        ✦ LIMITED — 3 Months Pro for the price of 1 &nbsp;
+        ✦ LIMITED — 3 Months Pro for the price of 1 —{' '}
         <a
           href="/shop"
           style={{
-            color: '#0A0900',
-            fontWeight: 800,
+            color: 'var(--gold-pale)',
+            fontFamily: "'Tenor Sans', sans-serif",
             textDecoration: 'underline',
             textUnderlineOffset: 2,
+            letterSpacing: '0.15em',
           }}
         >
           Claim Now →
@@ -76,28 +75,18 @@ export default function PromoBanner() {
           background: 'none',
           border: 'none',
           cursor: 'pointer',
-          color: 'rgba(10,9,0,0.6)',
+          color: 'rgba(248,220,144,0.5)',
           display: 'flex',
           alignItems: 'center',
           padding: 4,
           borderRadius: 4,
           transition: 'color 0.2s',
         }}
-        onMouseEnter={e => (e.currentTarget.style.color = '#0A0900')}
-        onMouseLeave={e => (e.currentTarget.style.color = 'rgba(10,9,0,0.6)')}
+        onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold-pale)')}
+        onMouseLeave={e => (e.currentTarget.style.color = 'rgba(248,220,144,0.5)')}
       >
         <X size={14} />
       </button>
-
-      <style>{`
-        @keyframes promoShimmer {
-          0%   { background-position: 200% center; }
-          100% { background-position: -200% center; }
-        }
-        @media (max-width: 768px) {
-          .promo-mobile-hide { display: none; }
-        }
-      `}</style>
     </div>
   )
 }
