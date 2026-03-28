@@ -43,6 +43,26 @@ export function MasterBackground() {
       type: i < 210 ? 'ivory' : i < 270 ? 'gold' : 'teal',
     }))
 
+    // ── Shooting stars ────────────────────────────────────────────────────────
+    interface ShootingStar { x: number; y: number; vx: number; vy: number; len: number; life: number; maxLife: number; active: boolean }
+    const shootingStars: ShootingStar[] = Array.from({ length: 3 }, () => ({ x: 0, y: 0, vx: 0, vy: 0, len: 0, life: 0, maxLife: 0, active: false }))
+    let nextShootAt = -1 // set on first draw
+
+    const spawnShootingStar = () => {
+      const s = shootingStars.find(s => !s.active)
+      if (!s) return
+      s.x = Math.random() * canvas.width * 0.7
+      s.y = Math.random() * canvas.height * 0.4
+      const angle = (Math.random() * 20 + 15) * Math.PI / 180
+      const speed = 6 + Math.random() * 4
+      s.vx = Math.cos(angle) * speed
+      s.vy = Math.sin(angle) * speed
+      s.len = 150 + Math.random() * 100
+      s.maxLife = 50 + Math.floor(Math.random() * 20)
+      s.life = 0
+      s.active = true
+    }
+
     // ── Layer F: Background stars ─────────────────────────────────────────────
     const stars = Array.from({ length: 150 }, () => ({
       x: Math.random(), y: Math.random() * 0.7,
@@ -70,6 +90,8 @@ export function MasterBackground() {
 
       const W = canvas.width, H = canvas.height
       t += 0.0001
+      if (nextShootAt < 0) nextShootAt = ts + 10000 + Math.random() * 5000
+      if (ts >= nextShootAt) { spawnShootingStar(); nextShootAt = ts + 10000 + Math.random() * 5000 }
 
       ctx.clearRect(0, 0, W, H)
 
@@ -98,6 +120,30 @@ export function MasterBackground() {
         ctx.arc(s.x * W + px * 0.2, s.y * H + py * 0.1, s.size, 0, Math.PI * 2)
         ctx.fill()
       })
+      // ── Shooting stars ──────────────────────────────────────────────────────
+      shootingStars.forEach(s => {
+        if (!s.active) return
+        s.life++
+        const progress = s.life / s.maxLife
+        const op = progress < 0.3 ? progress / 0.3 : 1 - (progress - 0.3) / 0.7
+        s.x += s.vx
+        s.y += s.vy
+        const tailX = s.x - s.vx * (s.len / 8)
+        const tailY = s.y - s.vy * (s.len / 8)
+        const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y)
+        grad.addColorStop(0, 'transparent')
+        grad.addColorStop(0.6, `rgba(242,192,80,${op * 0.4})`)
+        grad.addColorStop(1, `rgba(255,255,220,${op})`)
+        ctx.globalAlpha = 1
+        ctx.strokeStyle = grad
+        ctx.lineWidth = 1.5
+        ctx.beginPath()
+        ctx.moveTo(tailX, tailY)
+        ctx.lineTo(s.x, s.y)
+        ctx.stroke()
+        if (s.life >= s.maxLife) s.active = false
+      })
+
       ctx.globalAlpha = 1
 
       // ── Layer D: Deep sine wave paths ───────────────────────────────────────

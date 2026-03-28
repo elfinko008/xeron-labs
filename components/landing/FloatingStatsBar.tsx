@@ -1,48 +1,28 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
-function useAnimatedCounter(target: number, duration = 2000) {
-  const [value, setValue] = useState(0)
-  const startRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    startRef.current = null
-    const start = performance.now()
-
-    const tick = (now: number) => {
-      const elapsed = now - start
-      const progress = Math.min(elapsed / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setValue(Math.round(target * eased))
-      if (progress < 1) requestAnimationFrame(tick)
-    }
-
-    requestAnimationFrame(tick)
-  }, [target, duration])
-
-  return value
-}
-
-interface StatItem { emoji: string; label: string; count: number; suffix?: string }
+interface StatItem { emoji: string; label: string; count: number }
 
 const STATS: StatItem[] = [
-  { emoji: '🎮', label: 'games generated today', count: 47, suffix: '' },
-  { emoji: '⚡', label: 'scripts created', count: 312, suffix: '' },
-  { emoji: '🪙', label: 'credits used', count: 4891, suffix: '' },
-  { emoji: '👾', label: 'active builders', count: 23, suffix: '' },
+  { emoji: '🎮', label: 'games generated today', count: 47 },
+  { emoji: '⚡', label: 'scripts created',        count: 312 },
+  { emoji: '🪙', label: 'credits used',            count: 4891 },
+  { emoji: '👾', label: 'active builders',         count: 23 },
 ]
 
-function LiveStat({ stat, active }: { stat: StatItem; active: boolean }) {
-  const [live, setLive] = useState(stat.count)
-  const displayed = useAnimatedCounter(active ? live : 0, active ? 1800 : 0)
+function LiveStat({ stat }: { stat: StatItem }) {
+  const [count, setCount] = useState(stat.count)
 
   useEffect(() => {
-    if (!active) return
-    const interval = setInterval(() => {
-      setLive(v => v + Math.floor(Math.random() * 3))
-    }, 3000 + Math.random() * 4000)
-    return () => clearInterval(interval)
-  }, [active])
+    const tick = () => {
+      setCount(v => v + Math.floor(Math.random() * 3))
+      schedule()
+    }
+    let id: ReturnType<typeof setTimeout>
+    const schedule = () => { id = setTimeout(tick, 3000 + Math.random() * 4000) }
+    schedule()
+    return () => clearTimeout(id)
+  }, [])
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0 28px', borderRight: '0.5px solid rgba(212,146,15,0.12)' }}>
@@ -56,7 +36,7 @@ function LiveStat({ stat, active }: { stat: StatItem; active: boolean }) {
           lineHeight: 1,
           display: 'block',
         }}>
-          {displayed.toLocaleString()}{stat.suffix}
+          {count.toLocaleString()}
         </span>
         <span style={{
           fontFamily: "'Tenor Sans', sans-serif",
@@ -73,19 +53,8 @@ function LiveStat({ stat, active }: { stat: StatItem; active: boolean }) {
 }
 
 export function FloatingStatsBar() {
-  const [active, setActive] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setActive(true) }, { threshold: 0.3 })
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-
   return (
-    <div ref={ref} style={{
+    <div style={{
       background: 'rgba(3,3,12,0.80)',
       backdropFilter: 'blur(40px) saturate(160%)',
       borderTop: '0.5px solid rgba(212,146,15,0.12)',
@@ -107,7 +76,7 @@ export function FloatingStatsBar() {
             <span style={{ fontFamily: "'Tenor Sans', sans-serif", fontSize: 10, letterSpacing: '0.20em', textTransform: 'uppercase', color: '#4ADE80' }}>LIVE</span>
           </div>
           {STATS.map(stat => (
-            <LiveStat key={stat.label} stat={stat} active={active} />
+            <LiveStat key={stat.label} stat={stat} />
           ))}
         </div>
       </div>

@@ -66,7 +66,6 @@ const FAQ = [
   { q: 'Can the AI create custom 3D models?', a: 'No. XERON works with Roblox Toolbox assets and primitives. It intelligently selects and positions assets from the Toolbox library.' },
   { q: 'How do I cancel my subscription?', a: 'Cancel anytime from Dashboard → Account → Plan → Cancel Plan. Your plan stays active until end of the billing period.' },
   { q: 'Can I get a refund?', a: 'Digital content (Credits) is delivered immediately after purchase. By accepting the withdrawal waiver during purchase, the 14-day right of withdrawal expires upon immediate delivery per §356 Abs. 5 BGB.' },
-  { q: 'What languages does XERON support?', a: 'XERON is available in 7 languages: English, German, French, Spanish, Portuguese, Japanese, and Chinese. Your browser language is automatically detected.' },
 ]
 
 const HOW_IT_WORKS = [
@@ -132,7 +131,7 @@ export default function LandingPage() {
               { value: '150+', label: 'Games Created', icon: '✦' },
               { value: '2 Min', label: 'Avg. Generation', icon: '⚡' },
               { value: '6', label: 'AI Modes', icon: '◈' },
-              { value: '7', label: 'Languages', icon: '🌐' },
+              { value: '99%', label: 'Satisfaction', icon: '★' },
             ].map((stat, i) => (
               <ScrollReveal key={stat.label} delay={i * 0.08}>
                 <div className="lg-card-holo" style={{ padding: 32, textAlign: 'center' }}>
@@ -260,7 +259,7 @@ export default function LandingPage() {
                     <div className="t-label" style={{ marginBottom: 8 }}>{plan.name}</div>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
                       <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 48, fontWeight: 700, color: plan.color }}>
-                        {plan.price === 0 ? 'Free' : `${plan.price.toFixed(2).replace('.', ',')}€`}
+                        {plan.price === 0 ? 'Free' : `€${plan.price.toFixed(2)}`}
                       </span>
                       {plan.price > 0 && <span className="t-body" style={{ fontSize: 13 }}>/mo</span>}
                     </div>
@@ -300,7 +299,7 @@ export default function LandingPage() {
                   <div className="lg-card" style={{ padding: '20px 24px', textAlign: 'center', minWidth: 140 }}>
                     <div style={{ color: 'var(--gold-bright)', fontSize: 18, fontFamily: "'Tenor Sans',sans-serif", letterSpacing: '0.05em' }}>🪙 {pack.credits}</div>
                     <div className="t-label" style={{ margin: '6px 0 10px' }}>{pack.name} Pack</div>
-                    <div style={{ color: 'var(--t-1)', fontSize: 16, fontWeight: 600 }}>{pack.price.toFixed(2).replace('.', ',')}€</div>
+                    <div style={{ color: 'var(--t-1)', fontSize: 16, fontWeight: 600 }}>€{pack.price.toFixed(2)}</div>
                   </div>
                 </Link>
               </ScrollReveal>

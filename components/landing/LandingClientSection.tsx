@@ -39,9 +39,9 @@ export function LandingClientSection() {
         {/* Social proof */}
         <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', animation: 'fadeUp 0.8s 0.5s ease both' }}>
           {[
-            { text: '10,000+ Games Generated' },
+            { text: '150+ Games Generated' },
             { text: '4.9/5 from 500+ Creators' },
-            { text: 'Avg. 2 Min Generation' },
+            { text: '99% Satisfaction' },
           ].map((item, i) => (
             <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--t-3)', fontSize: 12, fontFamily: "'Tenor Sans',sans-serif", letterSpacing: '0.06em' }}>
               {i > 0 && <span style={{ color: 'rgba(212,146,15,0.30)' }}>◆</span>}

@@ -125,7 +125,7 @@ const CREDIT_PACKS: CreditPack[] = [
 // ─── Helper ────────────────────────────────────────────────────────────────────
 
 function formatPrice(price: number) {
-  return price.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+  return '€' + price.toFixed(2)
 }
 
 // ─── Section header ────────────────────────────────────────────────────────────
