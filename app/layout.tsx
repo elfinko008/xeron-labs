@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { SplashScreen } from '@/components/SplashScreen'
 import { CookieBanner } from '@/components/shared/CookieBanner'
-import { CursorGlow } from '@/components/landing/CursorGlow'
+import { LuxuryCursor } from '@/components/effects/LuxuryCursor'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from '@/components/AuthProvider'
 
@@ -10,12 +10,14 @@ export const metadata: Metadata = {
   title: 'XERON Engine — AI Roblox Game Builder',
   description: 'Build Roblox games with AI. Describe your game, XERON builds it. Professional games, zero code needed.',
   keywords: ['roblox', 'ai', 'game builder', 'roblox studio', 'lua', 'no code'],
+  icons: { icon: '/logo.png', apple: '/logo.png' },
   openGraph: {
     title: 'XERON Engine — AI Roblox Game Builder',
     description: 'Build Roblox games with AI. Professional games, zero code needed.',
     url: 'https://xeron-labs.com',
     siteName: 'XERON Engine',
     type: 'website',
+    images: [{ url: '/logo.png', width: 400, height: 400 }],
   },
 }
 
@@ -39,22 +41,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AuthProvider>
           <SplashScreen />
-          <CursorGlow />
+          <LuxuryCursor />
           <CookieBanner />
           {children}
           <Toaster
             position="bottom-right"
             toastOptions={{
               style: {
-                background: 'rgba(12,12,36,0.95)',
-                color: '#F0F1FC',
-                border: '1px solid rgba(212,160,23,0.25)',
+                background: 'rgba(3,3,12,0.95)',
+                color: '#F0EDE8',
+                border: '0.5px solid rgba(212,146,15,0.25)',
                 borderRadius: '16px',
                 backdropFilter: 'blur(20px)',
                 fontFamily: "'Tenor Sans', sans-serif",
+                letterSpacing: '0.04em',
               },
               success: {
-                iconTheme: { primary: '#E8BC3A', secondary: '#0A0900' },
+                iconTheme: { primary: '#E8A820', secondary: '#060300' },
               },
             }}
           />

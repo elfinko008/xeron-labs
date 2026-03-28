@@ -7,8 +7,9 @@ import PromoBanner from '@/components/landing/PromoBanner'
 import { ScrollReveal } from '@/components/landing/ScrollReveal'
 import StylePresetsShowcase from '@/components/landing/StylePresetsShowcase'
 import { LandingClientSection } from '@/components/landing/LandingClientSection'
-
-import { OceanDepthBackgroundDynamic as OceanDepthBackground } from '@/components/backgrounds/OceanDepthBackgroundDynamic'
+import { FloatingStatsBar } from '@/components/landing/FloatingStatsBar'
+import { MasterBackgroundDynamic as MasterBackground } from '@/components/backgrounds/MasterBackgroundDynamic'
+import { LiveActivityFeedDynamic as LiveActivityFeed } from '@/components/landing/LiveActivityFeedDynamic'
 const PricingCalculator = dynamic(() => import('@/components/landing/PricingCalculator'))
 const FeatureCard3D = dynamic(() => import('@/components/landing/FeatureCard3D'))
 const AIThinkingVisualizer = dynamic(() => import('@/components/landing/AIThinkingVisualizer'))
@@ -78,7 +79,8 @@ const HOW_IT_WORKS = [
 export default function LandingPage() {
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
-      <OceanDepthBackground />
+      <MasterBackground />
+      <LiveActivityFeed />
       <PromoBanner />
       <Navbar />
 
@@ -86,6 +88,9 @@ export default function LandingPage() {
       <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 'calc(var(--promo-h, 0px) + 68px + 52px)' as any, paddingBottom: 80, position: 'relative' }}>
         <LandingClientSection />
       </section>
+
+      {/* ── LIVE STATS BAR ────────────────────────────── */}
+      <FloatingStatsBar />
 
       {/* ── AI THINKING VISUALIZER ─────────────────── */}
       <section className="section-pad" style={{ position: 'relative' }}>

@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
+import Image from 'next/image'
 
 const SOCIAL = [
   { label: 'TikTok',     icon: '📱', href: 'https://tiktok.com/@xeron.labs?_r=1&_t=ZG-94zR7vuK4jh' },
@@ -35,21 +35,20 @@ const COLS = [
 
 export function Footer() {
   return (
-    <footer className="lg-nav" style={{ borderBottom: 'none', borderTop: '1px solid rgba(212,160,23,0.06)', marginTop: 0 }}>
+    <footer className="lg-nav" style={{ borderBottom: 'none', borderTop: 'none', marginTop: 0, position: 'relative' }}>
+      {/* Animated shimmer top border */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, overflow: 'hidden' }}>
+        <div style={{ height: '100%', background: 'linear-gradient(90deg, transparent, rgba(242,192,80,0.50), transparent)', animation: 'footerShimmer 4s linear infinite' }} />
+      </div>
       <div className="container-luxury" style={{ padding: '60px 24px 40px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48, marginBottom: 48 }}>
           {/* Brand */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <div style={{
-                width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,var(--gold-600),var(--gold-400))',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Sparkles size={18} color="#0A0900" />
-              </div>
+              <Image src="/logo.png" alt="XERON" width={28} height={28} style={{ objectFit: 'contain' }} onError={() => {}} />
               <span style={{
                 fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700,
-                background: 'linear-gradient(135deg,var(--gold-600),var(--gold-400),var(--plat-300))',
+                background: 'linear-gradient(135deg,var(--gold-base),var(--gold-bright),var(--chrome-pale))',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>XERON</span>
             </div>
@@ -117,6 +116,7 @@ export function Footer() {
       </div>
 
       <style>{`
+        @keyframes footerShimmer { 0%{transform:translateX(-100%);} 100%{transform:translateX(200%);} }
         @media (max-width: 768px) {
           footer .container-luxury > div:first-child {
             grid-template-columns: 1fr 1fr !important;

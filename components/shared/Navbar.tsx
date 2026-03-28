@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Menu, X, LayoutDashboard, LogOut, User } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/components/AuthProvider'
@@ -115,8 +116,9 @@ export function Navbar({ locale = 'en' }: { locale?: string }) {
         <div className="container-luxury" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           {/* Logo */}
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Image src="/logo.png" alt="XERON" width={36} height={36} style={{ objectFit: 'contain' }} priority onError={() => {}} />
             <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 700, background: 'linear-gradient(135deg,var(--gold-base),var(--gold-bright),var(--chrome-pale),var(--gold-bright))', backgroundSize: '200% auto', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: 'goldShimmer 4s linear infinite', letterSpacing: '0.04em' }}>
-              ◆ XERON
+              XERON
             </span>
           </Link>
 
