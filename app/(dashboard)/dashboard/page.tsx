@@ -13,7 +13,6 @@ import {
   Bell, Search, Flame, Zap, Copy, Check, ChevronRight,
 } from 'lucide-react'
 import Link from 'next/link'
-import LanguageSelector from '@/components/LanguageSelector'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
 
 type Mode = 'home' | 'game' | 'script' | 'ui' | 'fix' | 'clean' | 'diagnose'
@@ -132,7 +131,6 @@ export default function DashboardPage() {
             </button>
 
             <ThemeToggle />
-            <LanguageSelector />
 
             {/* Avatar */}
             <div

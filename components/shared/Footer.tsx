@@ -26,10 +26,10 @@ const COLS = [
     { label: 'FAQ', href: '/faq' },
   ]},
   { title: 'Legal', links: [
-    { label: 'AGB', href: '/agb' },
-    { label: 'Datenschutz', href: '/datenschutz' },
-    { label: 'Impressum', href: '/impressum' },
-    { label: 'Widerruf', href: '/widerruf' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Legal Notice', href: '/legal' },
+    { label: 'Withdrawal', href: '/withdrawal' },
   ]},
 ]
 
@@ -104,8 +104,8 @@ export function Footer() {
             © {new Date().getFullYear()} XERON Engine — xeron-labs.com
           </span>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
-            <Link href="/agb" style={{ color: 'var(--t-4)', fontSize: 13, textDecoration: 'none' }}>Terms</Link>
-            <Link href="/datenschutz" style={{ color: 'var(--t-4)', fontSize: 13, textDecoration: 'none' }}>Privacy</Link>
+            <Link href="/terms" style={{ color: 'var(--t-4)', fontSize: 13, textDecoration: 'none' }}>Terms</Link>
+            <Link href="/privacy" style={{ color: 'var(--t-4)', fontSize: 13, textDecoration: 'none' }}>Privacy</Link>
             <button
               onClick={() => { try { localStorage.removeItem('xeron_cookie_consent'); window.location.reload() } catch {} }}
               style={{ background: 'none', border: 'none', color: 'var(--t-4)', fontSize: 13, cursor: 'pointer' }}

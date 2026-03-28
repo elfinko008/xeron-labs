@@ -1,35 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-const LOCALES = ['en', 'de', 'fr', 'es', 'pt', 'ja', 'zh']
-const DEFAULT_LOCALE = 'en'
-
-function detectLocale(acceptLanguage: string | null): string {
-  if (!acceptLanguage) return DEFAULT_LOCALE
-  const langs = acceptLanguage
-    .split(',')
-    .map(l => l.split(';')[0].trim().toLowerCase().slice(0, 2))
-  for (const lang of langs) {
-    if (LOCALES.includes(lang)) return lang
-  }
-  return DEFAULT_LOCALE
-}
-
 const PROTECTED_PATHS = ['/dashboard']
 const AUTH_PATHS = ['/login', '/register']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const response = NextResponse.next()
-
-  // Auto-detect browser language on first visit
-  const hasLocaleCookie = request.cookies.has('NEXT_LOCALE')
-  if (!hasLocaleCookie) {
-    const detected = detectLocale(request.headers.get('accept-language'))
-    if (detected !== DEFAULT_LOCALE) {
-      response.cookies.set('NEXT_LOCALE', detected, { path: '/', maxAge: 31536000 })
-    }
-  }
 
   // Auth guard for protected routes
   const isProtected = PROTECTED_PATHS.some(p => pathname.startsWith(p))

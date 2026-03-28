@@ -95,7 +95,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; }
 body { background: var(--void); color: var(--t-1); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
 
 /* ═══ LIQUID GLASS CARD ═══════════════════════════ */
@@ -326,4 +326,5 @@ body { background: var(--void); color: var(--t-1); font-family: 'DM Sans', sans-
   .lg-modal { border-radius:28px; }
   .section-pad { padding:60px 0; }
   .btn-luxury,.btn-glass { padding:12px 24px; font-size:14px; }
+  .float-1,.float-2,.float-3,.float-4 { display:none; }
 }

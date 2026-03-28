@@ -4,8 +4,7 @@ import { SplashScreen } from '@/components/SplashScreen'
 import { CookieBanner } from '@/components/shared/CookieBanner'
 import { CursorGlow } from '@/components/landing/CursorGlow'
 import { Toaster } from 'react-hot-toast'
-import { NextIntlClientProvider } from 'next-intl'
-import { getLocale, getMessages } from 'next-intl/server'
+import { AuthProvider } from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
   title: 'XERON Engine — AI Roblox Game Builder',
@@ -20,20 +19,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  let locale = 'en'
-  let messages: Record<string, unknown> = {}
-  try {
-    locale = await getLocale()
-    messages = await getMessages() as Record<string, unknown>
-  } catch {
-    try {
-      messages = (await import('../messages/en.json')).default as Record<string, unknown>
-    } catch { /* no messages */ }
-  }
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -47,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         }} />
       </head>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <AuthProvider>
           <SplashScreen />
           <CursorGlow />
           <CookieBanner />
@@ -68,7 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               },
             }}
           />
-        </NextIntlClientProvider>
+        </AuthProvider>
       </body>
     </html>
   )

@@ -18,7 +18,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Circle,
 } from 'lucide-react'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -48,15 +47,7 @@ interface SeparatorItem {
 
 type NavEntry = NavItem | SeparatorItem
 
-// ─── Recent Projects ─────────────────────────────────────────────────────────
-
-const RECENT_PROJECTS = [
-  { id: '1', name: 'Zombie Survival RPG', icon: '🎮', status: 'active' },
-  { id: '2', name: 'Space Shooter Pro', icon: '🚀', status: 'building' },
-  { id: '3', name: 'Fantasy Quest Arena', icon: '⚔️', status: 'active' },
-  { id: '4', name: 'Neon Racing League', icon: '🏎️', status: 'paused' },
-  { id: '5', name: 'Mystery Dungeon', icon: '🗺️', status: 'draft' },
-]
+// ─── Status colors (kept for future real projects) ────────────────────────────
 
 const STATUS_COLORS: Record<string, string> = {
   active:   '#4ADE80',
@@ -366,54 +357,8 @@ export default function Sidebar({
             <div className="t-label" style={{ fontSize: 10, marginBottom: 6, paddingLeft: 4 }}>
               Recent Projects
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto', maxHeight: 140 }}>
-              {RECENT_PROJECTS.map(proj => (
-                <button
-                  key={proj.id}
-                  onClick={() => router.push(`/dashboard/projects/${proj.id}`)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '6px 8px',
-                    borderRadius: 10,
-                    background: 'transparent',
-                    border: '1px solid transparent',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'background 0.15s, border-color 0.15s',
-                    width: '100%',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = 'var(--glass-1)'
-                    e.currentTarget.style.borderColor = 'var(--glass-border)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = 'transparent'
-                    e.currentTarget.style.borderColor = 'transparent'
-                  }}
-                >
-                  <span style={{ fontSize: 14, flexShrink: 0 }}>{proj.icon}</span>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      color: 'var(--t-2)',
-                      flex: 1,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {proj.name}
-                  </span>
-                  <Circle
-                    size={7}
-                    fill={STATUS_COLORS[proj.status] ?? 'var(--t-3)'}
-                    stroke="none"
-                    style={{ flexShrink: 0 }}
-                  />
-                </button>
-              ))}
+            <div style={{ padding: '10px 8px', textAlign: 'center' }}>
+              <span style={{ fontSize: 11, color: 'var(--t-4)' }}>No projects yet</span>
             </div>
           </div>
         )}

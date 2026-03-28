@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Zap, Star, Building2, AlertTriangle } from 'lucide-react'
+import { Check, Zap, Star, Building2, AlertTriangle, Clock } from 'lucide-react'
 import { Navbar } from '@/components/shared/Navbar'
 import { Footer } from '@/components/shared/Footer'
 import { WithdrawalWaiverModal } from '@/components/shared/WithdrawalWaiverModal'
+
+const STRIPE_ENABLED = process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true'
 
 // ─── Plan data ─────────────────────────────────────────────────────────────────
 
@@ -218,13 +220,22 @@ function PlanCard({
         <a href="/register" className="btn-glass" style={{ width: '100%', marginBottom: 20, textAlign: 'center' }}>
           {plan.cta}
         </a>
-      ) : (
+      ) : STRIPE_ENABLED ? (
         <button
           className={`btn-luxury${plan.popular ? ' btn-luxury-pulse' : ''}`}
           style={{ width: '100%', marginBottom: 20 }}
           onClick={() => onBuy(plan.name, plan.isFree ? 0 : price)}
         >
           {plan.cta}
+        </button>
+      ) : (
+        <button
+          className="btn-glass"
+          disabled
+          style={{ width: '100%', marginBottom: 20, opacity: 0.6, cursor: 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+        >
+          <Clock size={14} />
+          Coming Soon
         </button>
       )}
 
@@ -249,8 +260,8 @@ function CreditPackCard({ pack, onBuy }: { pack: CreditPack; onBuy: (name: strin
       whileHover={{ y: -4, scale: 1.005 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="lg-card"
-      style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 12, position: 'relative', cursor: 'pointer' }}
-      onClick={() => onBuy(pack.name + ' Pack', pack.price)}
+      style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 12, position: 'relative', cursor: STRIPE_ENABLED ? 'pointer' : 'default' }}
+      onClick={() => STRIPE_ENABLED && onBuy(pack.name + ' Pack', pack.price)}
     >
       {pack.badge && (
         <div style={{ position: 'absolute', top: -12, right: 16 }}>
@@ -282,6 +293,13 @@ function CreditPackCard({ pack, onBuy }: { pack: CreditPack; onBuy: (name: strin
           {(pack.price / pack.credits * 100).toFixed(2)}¢ / cr
         </span>
       </div>
+
+      {!STRIPE_ENABLED && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--t-3)', fontSize: 12 }}>
+          <Clock size={12} />
+          Coming Soon
+        </div>
+      )}
     </motion.div>
   )
 }
