@@ -175,7 +175,10 @@ export default function AdminPage() {
                     <YAxis tick={{ fill: '#506080', fontSize: 12 }} />
                     <Tooltip
                       contentStyle={{ background: 'rgba(7,24,40,0.95)', border: '0.5px solid rgba(0,128,255,0.20)', borderRadius: 10, color: '#F0F4FF' }}
-                      formatter={(v: number) => [`€${v.toFixed(2)}`, 'Revenue']}
+                      formatter={(v: number | string | undefined) => {
+                        const num = typeof v === 'number' ? v : parseFloat(String(v ?? 0))
+                        return [`€${num.toFixed(2)}`, 'Revenue']
+                      }}
                     />
                     <Bar dataKey="revenue_eur" fill="#0080FF" radius={[6, 6, 0, 0]} />
                   </BarChart>
