@@ -192,7 +192,7 @@ async function generateAsync(
         model,
         max_tokens: mode === 'game' ? 8192 : 4096,
         system: config.systemPrompt,
-        messages: messages as Parameters<typeof anthropic.messages.create>[0]['messages'],
+        messages: messages as unknown as Parameters<typeof anthropic.messages.create>[0]['messages'],
       })
       const text = response.content.find(c => c.type === 'text')?.text ?? ''
       codeOutput = extractCode(text)

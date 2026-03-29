@@ -33,7 +33,8 @@ async function uploadImageToSupabase(file: File, userId: string): Promise<string
   // Track in user_uploads
   const { data: { user } } = await supabase.auth.getUser()
   if (user) {
-    await supabase.from('user_uploads').insert({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from('user_uploads').insert({
       user_id: user.id,
       storage_path: path,
       public_url: publicUrl,
