@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Tenor+Sans&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Tenor+Sans&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -125,6 +125,18 @@
   --glow-white:  rgba(255, 255, 255, 0.06);
 
   --promo-h: 0px;
+
+  /* ── PART 2: Dark Navy Luxury Palette ── */
+  --navy-950:   #020B18;
+  --navy-800:   #071828;
+  --navy-600:   #0E2D4A;
+  --blue-500:   #0080FF;
+  --blue-300:   #66B2FF;
+  --silver-400: #C0D0E8;
+  --gold-400:   #E0A820;
+  --t-1:        #F0F4FF;
+  --t-2:        #A0B0D0;
+  --t-3:        #506080;
 }
 
 [data-theme='light'] {
@@ -340,6 +352,59 @@ body { background: var(--void); color: var(--t-1); font-family: 'DM Sans', sans-
   50% { box-shadow: 0 8px 48px rgba(212,146,15,0.80), 0 0 80px rgba(212,146,15,0.30); }
 }
 .btn-luxury-pulse { animation: luxuryPulse 2.8s ease-in-out infinite; }
+
+/* ═══ PART 2: BLUE BUTTON SYSTEM ═════════════════ */
+@keyframes btnShimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0066CC, #0080FF, #3399FF);
+  background-size: 200% auto;
+  border: none; border-radius: 12px;
+  padding: 12px 28px;
+  color: #FFFFFF; font-family: 'Outfit', 'DM Sans', sans-serif;
+  font-weight: 600; font-size: 14px; letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px rgba(0, 128, 255, 0.40);
+  animation: btnShimmer 4s linear infinite;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(0, 128, 255, 0.60);
+}
+.btn-primary:active { transform: translateY(0) scale(0.99); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; animation: none; }
+
+.btn-ghost {
+  background: rgba(100, 150, 220, 0.06);
+  border: 0.5px solid rgba(100, 150, 220, 0.25);
+  border-radius: 12px; padding: 12px 28px;
+  color: #C0D0E8; font-family: 'Outfit', 'DM Sans', sans-serif;
+  font-weight: 500; font-size: 14px;
+  transition: all 0.25s ease;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-ghost:hover {
+  background: rgba(100, 150, 220, 0.12);
+  border-color: rgba(0, 128, 255, 0.40);
+  color: #F0F4FF;
+}
+.btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Credit pill */
+.credit-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(0, 128, 255, 0.08);
+  border: 0.5px solid rgba(0, 128, 255, 0.30);
+  cursor: pointer; transition: all 0.2s ease;
+}
+.credit-pill:hover { background: rgba(0, 128, 255, 0.15); border-color: rgba(0, 128, 255, 0.55); }
+.credit-coin { font-size: 16px; }
+.credit-number { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: #E0A820; letter-spacing: 0.03em; }
 
 /* ═══ INPUTS ══════════════════════════════════════ */
 .lg-input {

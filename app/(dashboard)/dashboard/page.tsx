@@ -381,7 +381,7 @@ function ScriptModePanel({ mode, credits, onCreditsChange }: {
         onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(212,160,23,0.15)'}
         onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'rgba(212,160,23,0.08)'}
         >
-          🪙 {credits.toLocaleString()} <span style={{ color: 'var(--t-3)', fontSize: 11 }}>/ {cost} cr ea</span>
+          🪙 {credits.toLocaleString()}
         </Link>
       </div>
 

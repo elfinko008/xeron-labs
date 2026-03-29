@@ -9,6 +9,8 @@ export type Quality = 'standard' | 'highend'
 export type ProjectStatus = 'pending' | 'generating' | 'done' | 'error'
 export type TransactionType = 'purchase' | 'usage' | 'monthly_reset' | 'bonus'
 
+export type Platform = 'roblox' | 'unity' | 'godot' | 'unreal' | 'mobile'
+
 export interface Profile {
   id: string
   email: string
@@ -19,6 +21,16 @@ export interface Profile {
   discord_id: string | null
   discord_joined_server: boolean
   discord_credits_claimed: boolean
+  active_platform: Platform
+  api_key_roblox: string | null
+  api_key_unity: string | null
+  api_key_godot: string | null
+  api_key_unreal: string | null
+  api_key_mobile: string | null
+  avatar_url: string | null
+  username: string | null
+  streak_days: number
+  total_generations: number
   created_at: string
 }
 
@@ -31,8 +43,12 @@ export interface Project {
   quality: Quality
   status: ProjectStatus
   lua_output: string | null
+  code_output: string | null
   summary: string | null
   controls_info: string | null
+  platform: Platform
+  output_language: string
+  image_references: string[] | null
   is_public: boolean
   created_at: string
 }
@@ -115,13 +131,27 @@ export type Database = {
 }
 
 // ============================================================
-// BROWSER CLIENT (Client Components)
+// BROWSER CLIENT (Client Components) — persistent session
 // ============================================================
 export function createClient() {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: true,
+        storageKey: 'xeron-auth',
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+      },
+    }
   )
+}
+
+// Singleton for client components (avoids multiple instances)
+let _client: ReturnType<typeof createClient> | null = null
+export function getClient() {
+  if (!_client) _client = createClient()
+  return _client
 }
 
 // ============================================================

@@ -82,9 +82,7 @@ const NAV_ROUTES: Record<string, string> = {
   account: '/dashboard/account',
 }
 
-const PLAN_MAX_CREDITS: Record<string, number> = {
-  free: 10, starter: 100, pro: 500, enterprise: 2000,
-}
+// Note: never show "X of Y" credits — only show the raw number
 
 // ─── Animated Credit Counter ──────────────────────────────────────────────────
 
@@ -130,8 +128,6 @@ function CreditWidget({
   collapsed: boolean
 }) {
   const router = useRouter()
-  const maxCredits = PLAN_MAX_CREDITS[plan.toLowerCase()] ?? 100
-  const pct = Math.min((credits / maxCredits) * 100, 100)
 
   if (collapsed) {
     return (
@@ -181,14 +177,6 @@ function CreditWidget({
             </span>
           )}
         </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="progress-bar" style={{ marginBottom: 12 }}>
-        <div
-          className="progress-fill"
-          style={{ width: `${pct}%` }}
-        />
       </div>
 
       {/* Action buttons */}
