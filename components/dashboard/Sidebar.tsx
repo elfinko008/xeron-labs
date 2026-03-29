@@ -28,6 +28,7 @@ interface SidebarProps {
   credits: number
   plan: string
   streakDays: number
+  platform?: string
 }
 
 interface NavItem {
@@ -208,6 +209,7 @@ export default function Sidebar({
   credits,
   plan,
   streakDays,
+  platform = 'roblox',
 }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
   const router = useRouter()
@@ -299,8 +301,17 @@ export default function Sidebar({
                 className="t-headline"
                 style={{ fontSize: 17, whiteSpace: 'nowrap' }}
               >
-                <span className="text-gold-gradient">XERON</span>
-                <span style={{ color: 'var(--t-2)', fontWeight: 400 }}> Engine</span>
+                <span style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <span>
+                    <span className="text-gold-gradient">XERON</span>
+                    <span style={{ color: 'var(--t-2)', fontWeight: 400 }}> Engine</span>
+                  </span>
+                  {platform && (
+                    <span style={{ fontSize: 11, color: 'var(--t-3)', fontFamily: "'DM Sans',sans-serif", fontWeight: 400, letterSpacing: '0.04em', textTransform: 'capitalize' }}>
+                      {platform}
+                    </span>
+                  )}
+                </span>
               </motion.span>
             )}
           </AnimatePresence>
